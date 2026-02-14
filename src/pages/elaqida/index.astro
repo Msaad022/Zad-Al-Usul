@@ -1,0 +1,78 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { Breadcrumb, type ICrumb, ElaqidaFeed } from "../../components";
+
+const itemsCrumb: ICrumb[] = [
+  {
+    type: "both",
+    current: false,
+    name: "زاد الأصول",
+    url: "/",
+  },
+  {
+    type: "breadcrumb",
+    current: true,
+    name: "أسئلة العقيدة",
+    url: "/elaqida",
+  },
+];
+---
+
+<Layout>
+  <Fragment slot="head-meta">
+    <title>زاد الأصول | أسئلة العقيدة الإسلامية</title>
+    <meta
+      name="description"
+      content="أسئلة وأجوبة نصّية مختارة في العقيدة الإسلامية، مع رابط للصفحة الكاملة التي تحتوي على شرح مُفصّل وتسجيل صوتي."
+    />
+
+    <meta
+      name="keywords"
+      content="العقيدة الإسلامية, أسئلة وأجوبة, التوحيد, الإيمان, الإسلام, الشرح الصوتي, شرح العقيدة, أسئلة في العقيدة, تعليم العقيدة, دروس العقيدة, أصول الدين"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="زاد الأصول | أسئلة العقيدة الإسلامية" />
+    <meta
+      property="og:description"
+      content="أسئلة وأجوبة نصّية مختارة في العقيدة الإسلامية، مع رابط للصفحة الكاملة التي تحتوي على شرح مُفصّل وتسجيل صوتي."
+    />
+    <meta property="og:image" content="/favicon.svg" />
+    <meta property="og:url" content="https://www.example.com/elaqida" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="زاد الأصول | أسئلة العقيدة الإسلامية" />
+    <meta
+      name="twitter:description"
+      content="أسئلة وأجوبة نصّية مختارة في العقيدة الإسلامية، مع رابط للصفحة الكاملة التي تحتوي على شرح مُفصّل وتسجيل صوتي."
+    />
+    <meta name="twitter:image" content="/favicon.svg" />
+  </Fragment>
+  <!-- head-script -->
+  <Fragment slot="head-script">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "زاد الأصول",
+            "item": "http://localhost:4321"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "أسئلة العقيدة الإسلامية"
+          }
+        ]
+      }
+    </script>
+  </Fragment>
+
+  <Breadcrumb itemsCrumb={itemsCrumb} />
+  <ElaqidaFeed />
+</Layout>

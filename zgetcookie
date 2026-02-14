@@ -1,0 +1,29 @@
+get(key, options = void 0) {
+    if (this.#outgoing?.has(key)) {
+      let [serializedValue, , isSetValue] = this.#outgoing.get(key);
+      if (isSetValue) {
+        return new AstroCookie(serializedValue);
+      } else {
+        return void 0;
+      }
+    }
+
+  const decode = options?.decode ?? this.#safeDecode;
+
+  const values = this.#ensureParsed();
+    if (key in values) {
+      const value = values[key];
+      if (value) {
+        return new AstroCookie(decode(value));
+      }
+    }
+  }
+
+#safeDecode(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    console.log('invile cookies value')
+    return void 0;
+  }
+}

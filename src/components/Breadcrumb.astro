@@ -1,0 +1,155 @@
+---
+export type ICrumb = {
+  type: "breadcrumb" | "menu" | "both";
+  name: string;
+  url: string;
+  current: boolean;
+  label?: string;
+};
+
+interface Props {
+  itemsCrumb: ICrumb[];
+}
+
+const { itemsCrumb } = Astro.props;
+---
+
+<header
+  class="relative flex gap-4 justify-between items-center py-3 md:py-5 border-b"
+>
+  <ol
+    class="w-[calc(100%-48px)] flex gap-2 items-center"
+    aria-label="Breadcrumb"
+  >
+    {
+      itemsCrumb.map(({ type, name, url, current, label }, idx) => {
+        return (
+          type != "menu" && (
+            <li
+              class={`overflow-hidden text-ellipsis whitespace-nowrap ${idx == 0 ? "shrink-0" : ""}`}
+            >
+              {idx != 0 && (
+                <svg
+                  width="16px"
+                  height="16px"
+                  aria-hidden="true"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  class="inline-block me-2 stroke-dark-m dark:stroke-light-m"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    xmlns="http://www.w3.org/2000/svg"
+                    id="Vector"
+                    d="M0 8H14"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              )}
+              <a
+                href={url}
+                class={`items-center gap-2 font-medium text-sm ${current ? "pointer-events-none" : ""}`}
+                aria-current={current ? "page" : undefined}
+                aria-label={label == undefined ? undefined : label}
+              >
+                {name}
+              </a>
+            </li>
+          )
+        );
+      })
+    }
+  </ol>
+  <div class="h-8 shrink-0">
+    <button
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="فتح قائمة التنقل"
+      title="فتح قائمة التنقل"
+      id="nav-menu-toggle"
+      class="w-8 h-8 cursor-pointer"
+    >
+      <svg
+        width="32px"
+        height="32px"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        fill="none"
+        class="stroke-dark-m dark:stroke-light-m"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g xmlns="http://www.w3.org/2000/svg" id="Menu / Menu_Alt_05">
+          <path
+            xmlns="http://www.w3.org/2000/svg"
+            id="Vector"
+            d="M5 12H19"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <path
+            id="Vector"
+            d="M11 7H19"
+            stroke-width="2"
+            class="[[aria-expanded='true']_&]:-translate-x-1.5 transition-transform ease-linear duration-150"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <path
+            xmlns="http://www.w3.org/2000/svg"
+            id="Vector"
+            d="M5 17H13"
+            stroke-width="2"
+            class="[[aria-expanded='true']_&]:translate-x-1.5 transition-transform ease-linear duration-150"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </g>
+      </svg>
+    </button>
+    <div
+      id="navbar-collapse"
+      class="absolute w-full max-h-[calc(100dvh-100%)] top-full left-0 bg-light-m dark:bg-dark-m overflow-auto z-10"
+      hidden
+    >
+      <nav aria-label="Navigation menu">
+        <ul class="flex flex-col gap-4 py-8 px-4">
+          {
+            itemsCrumb.map(({ type, name, url, current, label }) => {
+              return (
+                type != "breadcrumb" && (
+                  <li>
+                    <a
+                      href={url}
+                      class="font-medium"
+                      aria-current={current ? "page" : undefined}
+                      aria-label={label == undefined ? undefined : label}
+                    >
+                      {name}
+                    </a>
+                  </li>
+                )
+              );
+            })
+          }
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const navMenuToggle =
+    document.querySelector<HTMLButtonElement>("#nav-menu-toggle");
+  const navbarCollapse =
+    document.querySelector<HTMLElement>("#navbar-collapse");
+  if (navMenuToggle && navbarCollapse) {
+    navMenuToggle.addEventListener("click", () => {
+      const expanded = navMenuToggle.getAttribute("aria-expanded") === "true";
+      // ✅ Update aria-expanded with correct type
+      navMenuToggle.setAttribute("aria-expanded", String(!expanded));
+      // ✅ Toggle menu visibility
+      navbarCollapse.hidden = expanded ? true : false;
+    });
+  }
+</script>

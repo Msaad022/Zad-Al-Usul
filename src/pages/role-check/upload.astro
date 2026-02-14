@@ -1,0 +1,262 @@
+---
+// If you meant for this route to be server-rendered, set export const prerender = false; in the page.
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import { actions, isInputError } from "astro:actions";
+import { Breadcrumb, type ICrumb } from "../../components";
+const itemsCrumb: ICrumb[] = [
+  {
+    type: "both",
+    current: false,
+    name: "زاد الأصول",
+    url: "/",
+  },
+  {
+    type: "breadcrumb",
+    current: false,
+    name: "أسئلة العقيدة",
+    url: "/elaqida",
+  },
+];
+
+const result = Astro.getActionResult(actions.upload.question);
+if (result && !result.error) {
+  // return Astro.redirect("/role-check/upload", 303);
+  console.log("success upload");
+}
+const inputErrors = isInputError(result?.error) ? result.error.fields : {};
+console.log(result);
+---
+
+<Layout>
+  <Fragment slot="head-meta">
+    <title>زاد الأصول | إضافة أسئلة العقيده</title>
+    <meta name="description" content="إضافة أسئلة العقيده" />
+  </Fragment>
+  <!-- head-script -->
+  <Fragment slot="head-script">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "زاد الأصول",
+            "item": "http://localhost:4321"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "أسئلة العقيدة الإسلامية",
+            "item": "http://localhost:4321/elaqida"
+          }
+        ]
+      }
+    </script>
+  </Fragment>
+  <Breadcrumb itemsCrumb={itemsCrumb} />
+
+  <section class="mt-10">
+    <form
+      method="GET"
+      action={actions.search.question}
+      class="max-w-md mx-auto"
+    >
+      <fieldset>
+        <legend class="sr-only">بحث</legend>
+        <label for="default-search" class="sr-only"
+          >ابحثْ عن سؤال إذا أردتَ التعديل.</label
+        >
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 18 20"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 5v10M3 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0V6a3 3 0 0 0-3-3H9m1.5-2-2 2 2 2"
+              ></path>
+            </svg>
+          </div>
+
+          <input
+            type="search"
+            id="default-search"
+            class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="ابحثْ عن سؤال إذا أردتَ التعديل. (مثال السؤال الاول)"
+            minlength="8"
+          />
+          <button
+            type="submit"
+            class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            aria-label="بحث عن سؤال">بحث</button
+          >
+        </div>
+      </fieldset>
+    </form>
+  </section>
+
+  <form
+    method="POST"
+    action={actions.upload.question}
+    enctype="multipart/form-data"
+    class="relative max-w-2xl mt-10"
+  >
+    <fieldset>
+      <legend class="text-xl mb-6">أضافة سؤال في العقيده</legend>
+
+      <div class="mb-6">
+        <label
+          for="typeque"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >ترتيب السؤال
+        </label>
+        <input
+          type="text"
+          id="typeque"
+          name="typeque"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="السؤال الاول او السؤال الثاني وهكذا"
+          aria-describedby="error-typeque error-inputs"
+          minlength="8"
+        />
+        {
+          inputErrors.typeque && (
+            <p id="error-typeque" role="alert">
+              {inputErrors.typeque.map((err) => {
+                return <span class="block mt-1.5">{err}</span>;
+              })}
+            </p>
+          )
+        }
+      </div>
+      <div class="mb-6">
+        <label
+          for="question"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >نص السؤال
+        </label>
+        <textarea
+          id="question"
+          name="question"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="نص السؤال"
+          aria-describedby="error-question error-inputs"
+          minlength="8"
+          autocomplete="nope"
+          aria-autocomplete="none"></textarea>
+        {
+          inputErrors.question && (
+            <p id="error-question" role="alert">
+              {inputErrors.question.map((err) => {
+                return <span class="block mt-1.5">{err}</span>;
+              })}
+            </p>
+          )
+        }
+      </div>
+      <div class="mb-6">
+        <label
+          for="answer"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >إجابة السؤال
+        </label>
+        <textarea
+          id="answer"
+          name="answer"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="إجابة السؤال"
+          aria-describedby="error-answer error-inputs"
+          rows="4"
+          minlength="8"
+          autocomplete="nope"
+          aria-autocomplete="none"></textarea>
+        {
+          inputErrors.answer && (
+            <p id="error-answer" role="alert">
+              {inputErrors.answer.map((err) => {
+                return <span class="block mt-1.5">{err}</span>;
+              })}
+            </p>
+          )
+        }
+      </div>
+      <div class="mb-6">
+        <label
+          for="description"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >أشرح السؤال
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="أشرح السؤال"
+          aria-describedby="error-description error-inputs"
+          rows="4"
+          minlength="300"
+          autocomplete="nope"
+          aria-autocomplete="none"></textarea>
+        {
+          inputErrors.description && (
+            <p id="error-description" role="alert">
+              {inputErrors.description.map((err) => {
+                return <span class="block mt-1.5">{err}</span>;
+              })}
+            </p>
+          )
+        }
+      </div>
+      <div class="mb-6">
+        <label
+          for="audio-file"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >أرفع تسجيل صوتي للسؤال
+        </label>
+        <input
+          type="file"
+          accept="audio/*"
+          id="audio-file"
+          name="audiofile"
+          class="block w-fit py-2.5 px-3 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+          placeholder="أرفع تسجيل صوتي للسؤال"
+          aria-describedby="error-audiofile error-inputs"
+        />
+        <!-- {
+          inputErrors.audiofile && (
+            <p id="error-audiofile" role="alert">
+              {inputErrors.audiofile.map((err) => {
+                return <span class="block mt-1.5">{err}</span>;
+              })}
+            </p>
+          )
+        } -->
+        {
+          result?.error?.type == "AstroActionError" && (
+            <p id="error-inputs" role="alert">
+              <span class="block mt-1.5">{result?.error?.message}</span>
+            </p>
+          )
+        }
+      </div>
+
+      <button
+        type="submit"
+        aria-label="تسجيل الدخول"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >إرسال</button
+      >
+    </fieldset>
+  </form>
+</Layout>

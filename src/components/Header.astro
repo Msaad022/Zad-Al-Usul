@@ -1,0 +1,141 @@
+---
+let altOffice =
+  "مكتبة منزلية إسلامية ذات رفوف خشبية تضم كتب التراث والتفسير والحديث، مع زخارف عربية على الباب وساعة حائط كلاسيكية";
+let titleOffice = "مكتبة إسلامية منزلية";
+let altPhoto =
+  "الشيخ محمد لطفي، يجلس بزيه الأزهري وعمامته البيضاء خلف مكتبه المليء بالكتب والزهور مع ستارة بنية في الخلفية";
+let titlePhoto = "الشيخ محمد لطفي";
+---
+
+<header class="w-full mb-4 sm:mb-8 rounded-b-lg border border-t-0">
+  <!-- Office background -->
+  <section class="relative bg-light-m dark:bg-dark-m">
+    <div class="relative">
+      <img
+        src="/mohamed-lotfy-library-office.webp"
+        alt={altOffice}
+        title={titleOffice}
+        class="object-cover w-full aspect-[4/2] md:aspect-[3/1] lg:aspect-[5/2] items-center justify-center bg-gradient-to-t from-gray-900 to-50% to-transparent"
+      />
+      <div
+        class="absolute start-0 top-0 w-full h-full linear-1x pointer-events-none"
+        aria-hidden="true"
+      >
+      </div>
+    </div>
+    <figure
+      class="flex flex-col md:flex-row ms-2 ms:ms-0 md:items-end gap-4 mb-0 relative md:absolute bottom-0 z-10"
+    >
+      <!-- Personal photo -->
+      <div
+        class="absolute translate-y-[calc(-100%+2rem)] md:translate-y-0 md:relative shrink-0"
+      >
+        <img
+          src="/mohamed-lotfy-photo.webp"
+          alt={altPhoto}
+          title={titlePhoto}
+          class="md:-mb-[2.5rem] md:ms-6 lg:ms-12 w-32 h-32 md:w-40 md:h-40 border-2 lg:border-4 rounded-lg"
+        />
+      </div>
+      <figcaption class="flex flex-col gap-2 text-start md:mb-4 pt-12 md:pt-0">
+        <!-- Role & Name -->
+        <p
+          id="title-role"
+          class="text-base font-medium md:text-white dark:text-white size-fit"
+        >
+          داعية <span aria-hidden="true" class="md:text-white dark:text-white"
+            >(</span
+          > إمام وخطيب ومدرس <span
+            aria-hidden="true"
+            class="md:text-white dark:text-white">)</span
+          >
+        </p>
+
+        <h1
+          id="title-name"
+          class="text-xl sm:text-2xl lg:text-3xl font-semibold md:text-white dark:text-white size-fit"
+          aria-labelledby="title-name title-role"
+        >
+          الشيخ الدكتور <span
+            aria-hidden="true"
+            class="font-normal md:text-white dark:text-white">|</span
+          > محمد لطفي عبد الرازق
+        </h1>
+      </figcaption>
+    </figure>
+  </section>
+  <!-- nav -->
+  <div
+    class="relative rounded-b-lg px-2 md:px-6 py-4 bg-light-m dark:bg-dark-m"
+  >
+    <nav class="md:ms-6 lg:ms-12">
+      <ul class="flex items-center gap-4 md:ms-40">
+        <li>
+          <a href="/elaqida" class="text-base font-medium dark:text-white-h"
+            >أسألة العقيده</a
+          >
+        </li>
+        <li class="ms-auto">
+          <div class="relative w-6 h-6" title="theme toggle">
+            <input
+              type="checkbox"
+              name="dark mode"
+              aria-label="dark mode"
+              id="theme-toggle"
+              class="peer absolute w-full h-full inset-0 appearance-none cursor-pointer"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="block peer-checked:hidden"
+              aria-hidden="true"
+              ><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg
+            >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="oklab(0.999994 0.0000455678 0.0000200868 / 0.95)"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="hidden peer-checked:block"
+              aria-hidden="true"
+              ><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"
+              ></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"
+              ></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"
+              ></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"
+              ></path><path d="m19.07 4.93-1.41 1.41"></path></svg
+            >
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.querySelector<HTMLInputElement>("#theme-toggle");
+
+  if (btn) {
+    let savedTheme =
+      localStorage.theme == "dark" ||
+      document.documentElement.classList.contains("dark");
+    btn.checked = savedTheme;
+    // Toggle on change
+    btn.addEventListener("change", () => {
+      localStorage.theme = !document.documentElement.classList.toggle("dark")
+        ? "light"
+        : "dark";
+    });
+  }
+</script>

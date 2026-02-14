@@ -1,0 +1,56 @@
+---
+// If you meant for this route to be server-rendered, set export const prerender = false; in the page.
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import {
+  AudioService,
+  AudioStorageFactory,
+} from "../../lib/cloudinary/model/getAudios";
+import { AudioPlayer } from "../../components";
+import PostRepository from "../../db/elaqidaRepository";
+
+const { slug } = Astro.params;
+
+if (!slug || !/^[1-9]\d*$/.test(slug)) {
+  return new Response(null, {
+    status: 404,
+    statusText: "not found",
+  });
+}
+
+const index = parseInt(slug, 10);
+const audioService = new AudioService(AudioStorageFactory.create("cloudinary"));
+const audioCloudUrl = await audioService.getAudio(index, 5000);
+
+let audioPosts = null;
+if (audioCloudUrl.status != 200) {
+  return new Response(null, {
+    status: audioCloudUrl.status,
+    statusText: audioCloudUrl.message,
+  });
+} else if (audioCloudUrl.status === 200) {
+  audioPosts = await PostRepository.getById(index);
+}
+---
+
+<Layout>
+  <Fragment slot="head-meta">
+    <title>زاد الأصول | {audioPosts?.question}</title>
+  </Fragment>
+
+  <!-- <h1>🎵 الملف رقم {index}</h1>
+  <div style="margin-top:20px">
+    <a href={`/elaqida/${index + 1}`}>التالي ➡️</a>
+    {index > 1 && <a href={`/elaqida/${index - 1}`}>⬅️ السابق</a>}
+  </div> -->
+
+  {
+    audioCloudUrl.status === 200 && "secure_url" in audioCloudUrl && (
+      <AudioPlayer audioPosts={audioPosts} audioCloudUrl={audioCloudUrl} />
+      // <audio controls>
+      //   <source src={audioCloudUrl.secure_url} type="audio/ogg" />
+      //   Your browser does not support audio playback.
+      // </audio>
+    )
+  }
+</Layout>

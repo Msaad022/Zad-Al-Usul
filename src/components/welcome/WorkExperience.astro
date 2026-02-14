@@ -1,0 +1,154 @@
+<section
+  class="my-4 sm:my-8 rounded-lg border px-3 py-5 bg-light-m dark:bg-dark-m"
+  data-showmore="true"
+>
+  <h2
+    id="work-experience-heading"
+    class="text-lg font-bold mb-4 dark:text-white-h"
+  >
+    الخبرة العملية
+  </h2>
+  <ul
+    class="relative border-s-2 ms-1 sm:ms-3"
+    id="parentShowMore"
+    data-show="2"
+  >
+    <li class="ms-5 mb-8">
+      <div
+        class="absolute w-3 h-3 bg-gray-400 dark:bg-gray-b rounded-full -start-[7px] translate-y-2/4"
+        aria-hidden="true"
+      >
+      </div>
+
+      <article>
+        <h3
+          id="work-experience-1"
+          class="text-base font-semibold mb-2.5 dark:text-white-h"
+          aria-labelledby="work-experience-heading work-experience-1"
+        >
+          أمام وخطيب المسجد الكبير بسللنت
+        </h3>
+        <div>
+          <p>
+            <span class="visually-hidden">المدة: من يناير 2023 إلى الآن</span>
+            <time aria-hidden="true" datetime="2023-01">يناير 2023</time>
+            <span aria-hidden="true">–</span>
+            <span aria-hidden="true"> إلى الآن</span>
+            <span aria-hidden="true">•</span>
+            <span
+              aria-hidden="true"
+              data-duration="format"
+              class="text-sm"
+              data-ys="2023-01-01"
+              data-ye="0000"></span>
+          </p>
+          <p>
+            <span class="visually-hidden"> مدينة المنصوره ,قرية سللنت</span>
+            <span aria-hidden="true">المنصوره ,سللنت</span>
+          </p>
+          <ul class="mt-2.5 space-y-2 ps-4">
+            <li>
+              - تنظيم وإدارة مسابقتين في شهرَي رمضان 2024 و2025، فاز فيهما أكثر
+              من 250 شخصًا، مع جوائز بلغت قيمتها الإجمالية 50,000 جنيه.
+            </li>
+            <li>
+              - إعداد وتقديم دورة في تعلم التجويد لعام 2025 للنساء والرجال
+              بمشاركة أكثر من 25 متدربًا، ومازالت الدورة مستمرة حتى الآن.
+            </li>
+          </ul>
+        </div>
+      </article>
+    </li>
+    <li class="ms-5 mb-8">
+      <div
+        class="absolute w-3 h-3 bg-gray-400 dark:bg-gray-b rounded-full -start-[7px] translate-y-2/4"
+        aria-hidden="true"
+      >
+      </div>
+
+      <article>
+        <h3
+          id="work-experience-2"
+          class="text-base font-semibold mb-2.5 dark:text-white-h"
+          aria-labelledby="work-experience-heading work-experience-2"
+        >
+          أمام وخطيب مسجد نبويه الجيار
+        </h3>
+        <div>
+          <p>
+            <span class="visually-hidden"
+              >المدة: من يناير 1998 إلى ابريل 2005</span
+            >
+            <time aria-hidden="true" datetime="2023-01">يناير 1998</time>
+            <span aria-hidden="true">–</span>
+            <span aria-hidden="true">ابريل 2005</span>
+            <span aria-hidden="true">•</span>
+            <span
+              aria-hidden="true"
+              data-duration="format"
+              class="text-sm"
+              data-ys="1998-01-01"
+              data-ye="2005-04-01"></span>
+          </p>
+          <p>
+            <span class="visually-hidden"> مدينة المنصوره ,قرية برق العز</span>
+            <span aria-hidden="true">المنصوره ,برق العز</span>
+          </p>
+        </div>
+      </article>
+    </li>
+    <li class="ms-5 mb-8" hidden>
+      <div
+        class="absolute w-3 h-3 bg-gray-400 dark:bg-gray-b rounded-full -start-[7px] translate-y-2/4"
+        aria-hidden="true"
+      >
+      </div>
+
+      <article>
+        <h3
+          id="work-experience-3"
+          class="text-base font-semibold mb-2.5 dark:text-white-h"
+          aria-labelledby="work-experience-heading work-experience-3"
+        >
+          أمام وخطيب المسجد الكبير ببرق العز
+        </h3>
+        <div>
+          <p>
+            <span class="visually-hidden"
+              >المدة: من يناير 2005 إلى ابريل 2020</span
+            >
+            <time aria-hidden="true" datetime="2023-01">يناير 2005</time>
+            <span aria-hidden="true">–</span>
+            <span aria-hidden="true">ابريل 2020</span>
+            <span aria-hidden="true">•</span>
+            <span
+              aria-hidden="true"
+              data-duration="format"
+              class="text-sm"
+              data-ys="2005-02-01"
+              data-ye="2020-01-01"></span>
+          </p>
+          <p>
+            <span class="visually-hidden">مدينة المنصوره</span>
+            <span aria-hidden="true">المنصوره</span>
+          </p>
+        </div>
+      </article>
+    </li>
+  </ul>
+  <button
+    type="button"
+    aria-expanded="false"
+    aria-controls="parentShowMore"
+    aria-labelledby="btnShowMore work-experience-heading"
+    class="underline cursor-pointer ms-6 sm:ms-8"
+    data-btnShowMore="true"
+    id="btnShowMore">عرض المزيد</button
+  >
+</section>
+
+<script>
+  import { dateFormatSE, btnShowMore } from "../../utils";
+  dateFormatSE("span[data-duration='format']");
+  btnShowMore();
+</script>

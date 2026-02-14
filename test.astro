@@ -1,0 +1,2374 @@
+---
+// If you meant for this route to be server-rendered, set export const prerender = false; in the page.
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import { getAudioByNumber } from "../../lib/cloudinary/model/getAudios";
+import { Breadcrumb, type ICrumb } from "../../components";
+
+const { slug } = Astro.params;
+const index = parseInt(slug ?? "");
+
+// const audio = await getAudioByNumber(index, 5000);
+
+// if (audio.status != 200) {
+//   return Astro.response(new Response("❌ الملف غير موجود", { status: 404 }));
+// }
+
+const itemsCrumb: ICrumb[] = [
+  {
+    type: "both",
+    current: false,
+    name: "زاد الأصول",
+    url: "/",
+  },
+  {
+    type: "both",
+    current: false,
+    name: "أسئلة العقيدة",
+    url: "/elaqida",
+  },
+  {
+    type: "breadcrumb",
+    current: true,
+    name: `من ربك`,
+    url: `/elaqida/${index}`,
+    label: "السؤال الاول من ريك",
+  },
+];
+---
+
+<Layout>
+  <Fragment slot="head-meta">
+    <title>زاد الأصول | أسئلة العقيدة الإسلامية</title>
+  </Fragment>
+  <!-- head-script -->
+  <Fragment slot="head-script">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "زاد الأصول",
+            "item": "http://localhost:4321"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "أسئلة العقيدة الإسلامية",
+            "item": "http://localhost:4321/elaqida"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "السؤال الاول"
+          }
+        ]
+      }
+    </script>
+  </Fragment>
+  <!-- /public/El Aqida/3aqeeda1.ogg -->
+  <Breadcrumb itemsCrumb={itemsCrumb} />
+
+  <!-- <h1>🎵 الملف رقم {index}</h1>
+  <div style="margin-top:20px">
+    <a href={`/elaqida/${index + 1}`}>التالي ➡️</a>
+    {index > 1 && <a href={`/elaqida/${index - 1}`}>⬅️ السابق</a>}
+  </div>  -->
+
+  <!-- { await audio
+    ? (
+      <p>{audio}</p>
+      <audio controls>
+        <source src={audio.} type="audio/ogg" />
+        متصفحك لا يدعم تشغيل الصوت
+      </audio>
+    ) : (
+      <p>❌ الملف غير موجود</p>
+    )} -->
+</Layout>
+
+<!-- 
+
+      return {
+      "1": {
+        id: "1",
+        type_que: "السؤال الاول",
+        question: "من ربك",
+        answer: "ربى الله وهو رب العالمين.",
+        audio_url: "/elaqida/1",
+        words: [
+          {
+            text: "السؤال",
+            start: 548,
+            end: 888,
+          },
+          {
+            text: "الاول",
+            start: 888,
+            end: 1288,
+          },
+          {
+            text: "من",
+            start: 1288,
+            end: 2588,
+          },
+          {
+            text: "ربك؟",
+            start: 2588,
+            end: 4188,
+          },
+          {
+            text: "الاجابة",
+            start: 4188,
+            end: 5148,
+          },
+          {
+            text: "ربي",
+            start: 5148,
+            end: 6368,
+          },
+          {
+            text: "الله",
+            start: 6368,
+            end: 6908,
+          },
+          {
+            text: "وهو",
+            start: 6908,
+            end: 7808,
+          },
+          {
+            text: "رب",
+            start: 7808,
+            end: 8188,
+          },
+          {
+            text: "العالمين.",
+            start: 8188,
+            end: 9108,
+          },
+        ],
+        mainEntity: {
+          comment:
+            " هذا السؤال والجواب هما جزء من أساسيات الدين الإسلامي، ويُعرفان باسم 'الأصول الثلاثة' أو 'أركان الإيمان'",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: 'مَن ربُّك؟'",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "هذا السؤال هو أساس التوحيد، وهو أول سؤال يُسأل عنه المسلم في القبر.",
+                },
+                {
+                  id: "dq-2",
+                  item: "يهدف إلى اختبار إيمان الشخص ويقينه بوجود الله تعالى وربوبيته.",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName: "الجواب: 'ربي الله'",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "هذا الجواب هو إقرار بالتوحيد. كلمة 'ربّ' في اللغة العربية تعني المالك، والسيد، والمُربّي، والمدبّر.",
+                },
+                {
+                  id: "da-2",
+                  item: "عندما يقول المسلم 'ربي الله'، فهو يعترف بأن الله وحده هو الخالق، المالك، المدبّر لكل شؤون الكون، وأنه وحده المستحق للعبادة.",
+                },
+                {
+                  id: "da-3",
+                  item: "إضافة 'وهو رب العالمين' تؤكد أن ربوبية الله ليست مقتصرة على البشر فقط، بل تشمل كل ما في الكون من إنس وجن وحيوان ونبات وجماد.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "باختصار، هذا السؤال والجواب يمثلان خلاصة عقيدة المسلم: الإيمان بأن الله هو الرب والمالك والمدبر لكل شيء في هذا الكون، وأنه وحده المستحق للعبادة والطاعة.",
+        },
+      },
+      "2": {
+        id: "2",
+        type_que: "السؤال الثاني",
+        question: "ما دينك",
+        answer: "دينى الاسلام.",
+        audio_url: "/elaqida/2",
+        words: [
+          {
+            text: "السؤال",
+            start: 312,
+            end: 692,
+          },
+          {
+            text: "الثاني",
+            start: 692,
+            end: 1292,
+          },
+          {
+            text: "ما",
+            start: 1292,
+            end: 1912,
+          },
+          {
+            text: "دينك؟",
+            start: 1912,
+            end: 3752,
+          },
+          {
+            text: "الإجابة",
+            start: 3752,
+            end: 4532,
+          },
+          {
+            text: "ديني",
+            start: 4532,
+            end: 5712,
+          },
+          {
+            text: "الإسلام.",
+            start: 5712,
+            end: 6392,
+          },
+        ],
+        mainEntity: {
+          comment:
+            "هذا السؤال والجواب هما جزء أساسي من عقيدة المسلم، ويأتيان بعد الإقرار بربوبية الله.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: 'ما دينُك؟'",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "يهدف هذا السؤال إلى اختبار معرفة الشخص بدينه وقبوله له.",
+                },
+                {
+                  id: "dq-2",
+                  item: "الدين هو المنهج الكامل للحياة الذي يتبعه الإنسان، ويشمل العقيدة، العبادات، والأخلاق.",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName: "الجواب: 'ديني الإسلام'",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "هذا الجواب هو إقرار بأن المنهج الذي يتبعه الشخص هو الإسلام، وهو المنهج الذي ارتضاه الله لعباده.",
+                },
+                {
+                  id: "da-2",
+                  item: "كلمة 'الإسلام' تعني الاستسلام والخضوع التام لأمر الله تعالى، واتباع ما أنزل على رسوله محمد ﷺ.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "بشكل أساسي، الإجابة على هذا السؤال تُعبّر عن اختيارك لمنهج حياةٍ كاملٍ مبني على الاستسلام لإرادة الله وحده.",
+        },
+      },
+      "3": {
+        id: "3",
+        type_que: "السؤال الثالث",
+        question: "من نبيك",
+        answer: "نبيى محمد بن عبد الله بن عبد المطلب صلى الله عليه وسلم",
+        audio_url: "/elaqida/3",
+        words: [
+          {
+            text: "السؤال",
+            start: 1105,
+            end: 1645,
+          },
+          {
+            text: "الثالث",
+            start: 1645,
+            end: 2225,
+          },
+          {
+            text: "من",
+            start: 2225,
+            end: 3465,
+          },
+          {
+            text: "نبيك؟",
+            start: 3465,
+            end: 4885,
+          },
+          {
+            text: "الإجابة",
+            start: 4885,
+            end: 6225,
+          },
+          {
+            text: "نبي",
+            start: 6225,
+            end: 7645,
+          },
+          {
+            text: "محمد",
+            start: 7645,
+            end: 8585,
+          },
+          {
+            text: "بن",
+            start: 8585,
+            end: 9105,
+          },
+          {
+            text: "عبد",
+            start: 9105,
+            end: 9565,
+          },
+          {
+            text: "الله",
+            start: 9565,
+            end: 10065,
+          },
+          {
+            text: "بن",
+            start: 10065,
+            end: 10685,
+          },
+          {
+            text: "عبد",
+            start: 10685,
+            end: 11185,
+          },
+          {
+            text: "المطلب",
+            start: 11185,
+            end: 12105,
+          },
+          {
+            text: "صلى",
+            start: 12105,
+            end: 13125,
+          },
+          {
+            text: "الله",
+            start: 13125,
+            end: 13545,
+          },
+          {
+            text: "عليه",
+            start: 13545,
+            end: 14165,
+          },
+          {
+            text: "وسلم.",
+            start: 14165,
+            end: 14945,
+          },
+        ],
+        mainEntity: {
+          comment:
+            "هذا السؤال والجواب هما جزء أساسي من أسس عقيدة المسلم، وهما استكمال للإقرار بالتوحيد والإسلام.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: 'مَن نبيُّك؟'",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "هذا السؤال يهدف إلى اختبار معرفة الشخص برسول الله صلى الله عليه وسلم وإيمانه برسالته.",
+                },
+                {
+                  id: "dq-2",
+                  item: "الإيمان بجميع الأنبياء والمرسلين ركن من أركان الإيمان، ولكن الإيمان بنبوة محمد صلى الله عليه وسلم هو الشرط الأساسي لصحة إسلام الشخص، لأنه خاتم الأنبياء والمرسلين.",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName:
+                "الجواب: 'نبيي محمد بن عبد الله بن عبد المطلب صلى الله عليه وسلم'",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "هذا الجواب يحدد النبي الذي يتبعه المسلم. ذكر اسمه كاملاً 'محمد بن عبد الله' يؤكد على هويته ونسَبه، وهو أمر مهم في التاريخ والسيرة النبوية.",
+                },
+                {
+                  id: "da-2",
+                  item: "إضافة 'صلى الله عليه وسلم' هي أمر واجب عند ذكر اسمه، وهي دعاء له بالصلاة والسلام.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "باختصار، الإجابة على هذا السؤال تُعد إقرارًا بالرسالة المحمدية، وتأكيدًا على أن الشخص يتبع تعاليم النبي محمد صلى الله عليه وسلم، الذي أرسله الله ليُكمل الدين ويُبلّغ الرسالة إلى العالمين.",
+        },
+      },
+      "4": {
+        id: "4",
+        type_que: "السؤال الرابع",
+        question: "ما كتابك",
+        answer: "كتابى القران الكريم.",
+        audio_url: "/elaqida/4",
+        words: [
+          {
+            text: "السؤال",
+            start: 802,
+            end: 1202,
+          },
+          {
+            text: "الرابع",
+            start: 1202,
+            end: 1702,
+          },
+          {
+            text: "ما",
+            start: 1702,
+            end: 3082,
+          },
+          {
+            text: "كتابك؟",
+            start: 3082,
+            end: 4602,
+          },
+          {
+            text: "الإجابة",
+            start: 4602,
+            end: 6362,
+          },
+          {
+            text: "كتاب",
+            start: 6362,
+            end: 7142,
+          },
+          {
+            text: "القرآن",
+            start: 7142,
+            end: 8002,
+          },
+          {
+            text: "الكريم.",
+            start: 8002,
+            end: 8702,
+          },
+        ],
+        mainEntity: {
+          comment:
+            "هذا السؤال والجواب هما جزء أساسي من أساسيات الإيمان في الإسلام، وهو ركن من أركان الإيمان الستة: الإيمان بالكتب السماوية.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: 'ما كتابُك؟'",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "هذا السؤال يهدف إلى اختبار إيمان المسلم بالقرآن الكريم.",
+                },
+                {
+                  id: "dq-2",
+                  item: "القرآن هو آخر الكتب السماوية التي أنزلها الله، وهو الكتاب الذي يمثل الرسالة النهائية للهداية للبشرية جمعاء.",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName: "الجواب: 'كتابي القرآن الكريم'",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "هذا الجواب هو إقرار بأن القرآن هو الكتاب الذي يتبعه المسلم في حياته.",
+                },
+                {
+                  id: "da-2",
+                  item: "كلمة 'الكريم' هي صفة للقرآن، وتشير إلى عظمته وقدسيته وبركته.",
+                },
+                {
+                  id: "da-3",
+                  item: "يُعد القرآن دستور المسلم ومنهجه، فهو يحتوي على العقائد، والعبادات، والتشريعات، والأخلاق، والقصص، التي تهدي الإنسان إلى الطريق الصحيح.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "باختصار، الإجابة على هذا السؤال تؤكد على أن القرآن الكريم هو المصدر الأساسي للهداية والتشريع في حياة المسلم، وأنه يؤمن به ككلام الله المنزل على النبي محمد صلى الله عليه وسلم.",
+        },
+      },
+      "5": {
+        id: "5",
+        type_que: "السؤال الخامس",
+        question: "ما هو القران",
+        answer: "هو كلام الله تعالى.",
+        audio_url: "/elaqida/5",
+        words: [
+          {
+            text: "السؤال",
+            start: 481,
+            end: 861,
+          },
+          {
+            text: "الخامس",
+            start: 861,
+            end: 1401,
+          },
+          {
+            text: "ما",
+            start: 1401,
+            end: 2441,
+          },
+          {
+            text: "هو",
+            start: 2441,
+            end: 2701,
+          },
+          {
+            text: "القرآن؟",
+            start: 2701,
+            end: 5021,
+          },
+          {
+            text: "الإجابة",
+            start: 5021,
+            end: 6301,
+          },
+          {
+            text: "هو",
+            start: 6301,
+            end: 7041,
+          },
+          {
+            text: "كلام",
+            start: 7041,
+            end: 7781,
+          },
+          {
+            text: "الله",
+            start: 7781,
+            end: 8341,
+          },
+          {
+            text: "تعالى.",
+            start: 8341,
+            end: 9061,
+          },
+        ],
+        mainEntity: {
+          comment:
+            "هذا السؤال والجواب هما جزء أساسي من عقيدة المسلم حول مصدر الوحي.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: 'ما هو القرآن؟'",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "يهدف هذا السؤال إلى تعريف المسلم بالقرآن الكريم، ليس فقط ككتاب، بل ككلام إلهي.",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName: "الجواب: 'هو كلام الله تعالى'",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "هذا الجواب يؤكد على أن القرآن ليس من تأليف البشر أو النبي محمد ﷺ، بل هو كلام الله المنزل على نبيه محمد ﷺ.",
+                },
+                {
+                  id: "da-2",
+                  item: "هذه الإجابة تُرسّخ اعتقاد المسلم بأن القرآن هو المصدر الأعلى والأقدس للتشريع والهداية، لأنه كلام الخالق نفسه، وليس له أي خطأ أو نقص.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "باختصار، الإجابة على هذا السؤال تؤكد أن القرآن ليس مجرد كتاب تاريخي أو أدبي، بل هو الرسالة الإلهية الكاملة التي أنزلها الله لجميع البشر.",
+        },
+      },
+      "6": {
+        id: "6",
+        type_que: "السؤال السادس",
+        question: "لماذا نحفظ القران",
+        answer:
+          "حتى يرضى عنى ربى ، وأكون من أهل الجنه ، ويلبس والدى تاج الكرامه .",
+        audio_url: "/elaqida/6",
+        words: [
+          {
+            text: "السؤال",
+            start: 481,
+            end: 921,
+          },
+          {
+            text: "السادس",
+            start: 921,
+            end: 1481,
+          },
+          {
+            text: "لماذا",
+            start: 1481,
+            end: 2781,
+          },
+          {
+            text: "نحفظ",
+            start: 2781,
+            end: 3421,
+          },
+          {
+            text: "القرآن؟",
+            start: 3421,
+            end: 5501,
+          },
+          {
+            text: "الاجابة",
+            start: 5501,
+            end: 6581,
+          },
+          {
+            text: "حتى",
+            start: 6581,
+            end: 7401,
+          },
+          {
+            text: "يرضى",
+            start: 7401,
+            end: 8021,
+          },
+          {
+            text: "عني",
+            start: 8021,
+            end: 8461,
+          },
+          {
+            text: "ربي",
+            start: 8461,
+            end: 8961,
+          },
+          {
+            text: "وأكون",
+            start: 8961,
+            end: 10661,
+          },
+          {
+            text: "من",
+            start: 10661,
+            end: 10921,
+          },
+          {
+            text: "أهل",
+            start: 10921,
+            end: 11261,
+          },
+          {
+            text: "الجنة",
+            start: 11261,
+            end: 12361,
+          },
+          {
+            text: "ويلبس",
+            start: 12361,
+            end: 13361,
+          },
+          {
+            text: "والدي",
+            start: 13361,
+            end: 14121,
+          },
+          {
+            text: "تاج",
+            start: 14121,
+            end: 15141,
+          },
+          {
+            text: "الكرامة.",
+            start: 15141,
+            end: 16001,
+          },
+        ],
+        mainEntity: {
+          comment: "هذا السؤال والجواب هما جزء أساسي من عقيدة المسلم.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: لماذا نحفظ القرآن؟",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "المقصود هنا هو: ما السبب أو الفوائد من حفظ القرآن الكريم؟",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName:
+                "الجواب: حتى يرضى عني ربي، وأكون من أهل الجنة، ويلبس والدي تاج الكرامة.",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "حتى يرضى عني ربي الهدف الأول من حفظ القرآن هو نيل رضا الله عز وجل، لأن حفظ القرآن عبادة عظيمة، ومن أعظم القربات.",
+                },
+                {
+                  id: "da-2",
+                  item: "وأكون من أهل الجنة الحافظ للقرآن له مكانة عظيمة عند الله، ووعده بدخول الجنة ورفعة الدرجات فيها بقدر ما يحفظ ويعمل بما فيه.",
+                },
+                {
+                  id: "da-3",
+                  item: "ويلبس والدي تاج الكرامة من فضل الله أن ثواب الحافظ لا يقتصر عليه فقط، بل يشمل والديه أيضًا، فيكرمهم الله يوم القيامة بتاج الكرامة وكسوة الشرف.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "إذن الحفظ ليس مجرد حفظ كلمات، بل هو وسيلة للرضا الإلهي، دخول الجنة، وكرامة عظيمة للحافظ وأهله.",
+        },
+      },
+      "7": {
+        id: "7",
+        type_que: "السؤال السابع",
+        question: "من الذى خلقنا",
+        answer:
+          "الله هو الذى خلقنا ورزقنا ، وخلق السماوات والأرض ، وخلق كل شئ.",
+        audio_url: "/elaqida/7",
+        words: [
+          {
+            text: "السؤال",
+            start: 683,
+            end: 1003,
+          },
+          {
+            text: "السابع",
+            start: 1003,
+            end: 1583,
+          },
+          {
+            text: "من",
+            start: 1583,
+            end: 2943,
+          },
+          {
+            text: "الذي",
+            start: 2943,
+            end: 3323,
+          },
+          {
+            text: "خلقنا؟",
+            start: 3323,
+            end: 4923,
+          },
+          {
+            text: "الاجابة",
+            start: 4923,
+            end: 6503,
+          },
+          {
+            text: "الله",
+            start: 6503,
+            end: 7363,
+          },
+          {
+            text: "هو",
+            start: 7363,
+            end: 7783,
+          },
+          {
+            text: "الذي",
+            start: 7783,
+            end: 8323,
+          },
+          {
+            text: "خلقنا",
+            start: 8323,
+            end: 9223,
+          },
+          {
+            text: "ورزقنا",
+            start: 9223,
+            end: 10183,
+          },
+          {
+            text: "وخلق",
+            start: 10183,
+            end: 11463,
+          },
+          {
+            text: "السماوات",
+            start: 11463,
+            end: 12503,
+          },
+          {
+            text: "والأرض",
+            start: 12503,
+            end: 13263,
+          },
+          {
+            text: "وخلق",
+            start: 13263,
+            end: 14823,
+          },
+          {
+            text: "كل",
+            start: 14823,
+            end: 15383,
+          },
+          {
+            text: "شيء.",
+            start: 15383,
+            end: 15883,
+          },
+        ],
+        mainEntity: {
+          comment: "هذا السؤال والجواب هما جزء أساسي من عقيدة المسلم.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: من الذي خلقنا؟",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "المقصود: من هو الخالق الحقيقي للإنسان وكل ما في الكون؟",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName:
+                "الجواب: الله هو الذي خلقنا ورزقنا، وخلق السماوات والأرض، وخلق كل شيء.",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "الله هو الذي خلقنا يعني أن الله تعالى هو الذي أوجد الإنسان من عدم، وصوّره في أحسن صورة.",
+                },
+                {
+                  id: "da-2",
+                  item: "ورزقنا لم يكتفِ الله بخلقنا فقط، بل تكفّل أيضًا بأرزاقنا ومعيشتنا.",
+                },
+                {
+                  id: "da-3",
+                  item: "وخلق السماوات والأرض دليل على عظمته وقدرته سبحانه، لأنه خلق الكون كله بما فيه من كواكب وشموس وأرضين.",
+                },
+                {
+                  id: "da-4",
+                  item: "وخلق كل شيء لا يوجد أي شيء في الوجود إلا وهو مخلوق لله عز وجل.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "المعنى العام: نحن وكل ما حولنا مخلوقون لله وحده، وهذا يعلّم الطفل التوحيد والإيمان بأن الله هو الخالق والرازق والمدبّر لكل شيء.",
+        },
+      },
+      "8": {
+        id: "8",
+        type_que: "السؤال الثامن",
+        question: "لماذا خلقنا الله",
+        answer: "الله خلقنا لنعبده ولا نشرك به أحدا.",
+        audio_url: "/elaqida/8",
+        words: [
+          {
+            text: "السؤال",
+            start: 1139,
+            end: 1559,
+          },
+          {
+            text: "الثامن",
+            start: 1559,
+            end: 2119,
+          },
+          {
+            text: "لماذا",
+            start: 2119,
+            end: 3719,
+          },
+          {
+            text: "خلقنا",
+            start: 3719,
+            end: 4279,
+          },
+          {
+            text: "الله؟",
+            start: 4279,
+            end: 5939,
+          },
+          {
+            text: "الاجابة",
+            start: 5939,
+            end: 6839,
+          },
+          {
+            text: "الله",
+            start: 6839,
+            end: 7999,
+          },
+          {
+            text: "خلقنا",
+            start: 7999,
+            end: 8919,
+          },
+          {
+            text: "لنعبده",
+            start: 8919,
+            end: 10319,
+          },
+          {
+            text: "ولا",
+            start: 10319,
+            end: 11119,
+          },
+          {
+            text: "نشرك",
+            start: 11119,
+            end: 11899,
+          },
+          {
+            text: "به",
+            start: 11899,
+            end: 12259,
+          },
+          {
+            text: "أحدا.",
+            start: 12259,
+            end: 13099,
+          },
+        ],
+        mainEntity: {
+          comment: "هذا السؤال والجواب هما جزء أساسي من عقيدة المسلم.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: لماذا خلقنا الله؟",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "المقصود: ما الحكمة من خلق الله للإنسان؟",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName: "الجواب: الله خلقنا لنعبده ولا نشرك به أحدًا.",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "الله خلقنا أي أن وجودنا في الدنيا ليس صدفة، بل بإرادة الله وحكمته.",
+                },
+                {
+                  id: "da-2",
+                  item: "لنعبده الغاية الأساسية من حياتنا هي عبادة الله، أي طاعته، واتباع أوامره، والبعد عن نواهيه.",
+                },
+                {
+                  id: "da-3",
+                  item: "ولا نشرك به أحدًا يعني أن نعبد الله وحده فقط، من غير أن نعبد معه أحدًا آخر أو نجعل له شريكًا.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "المعنى العام: الله خلقنا لحكمة عظيمة، وهي عبادته وحده، وهذا يعلّم الطفل التوحيد والإخلاص لله.",
+        },
+      },
+      "9": {
+        id: "9",
+        type_que: "السؤال التاسع",
+        question: "ما هى كلمة التوحيد",
+        answer: "لا اله إلا الله.",
+        audio_url: "/elaqida/9",
+        words: [
+          {
+            text: "سؤال",
+            start: 582,
+            end: 942,
+          },
+          {
+            text: "التاسع",
+            start: 942,
+            end: 1482,
+          },
+          {
+            text: "ما",
+            start: 1482,
+            end: 2222,
+          },
+          {
+            text: "هي",
+            start: 2222,
+            end: 2662,
+          },
+          {
+            text: "كلمة",
+            start: 2662,
+            end: 3302,
+          },
+          {
+            text: "التوحيد؟",
+            start: 3302,
+            end: 5622,
+          },
+          {
+            text: "الإجابة",
+            start: 5622,
+            end: 6442,
+          },
+          {
+            text: "لا",
+            start: 6442,
+            end: 7462,
+          },
+          {
+            text: "إله",
+            start: 7462,
+            end: 8122,
+          },
+          {
+            text: "إلا",
+            start: 8122,
+            end: 8562,
+          },
+          {
+            text: "الله.",
+            start: 8562,
+            end: 9042,
+          },
+        ],
+        mainEntity: {
+          comment: "هذا السؤال والجواب هما جزء أساسي من عقيدة المسلم.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: ما هي كلمة التوحيد؟",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "المقصود: ما الكلمة التي تدل على توحيد الله عز وجل؟",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName: "الجواب: ا إله إلا الله.",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "لا إله يعني لا يوجد معبود بحق يستحق العبادة.",
+                },
+                {
+                  id: "da-2",
+                  item: "إلا الله أي أن المعبود الحق الوحيد هو الله سبحانه وتعالى.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "المعنى العام: كلمة التوحيد تعلمنا أن العبادة لا تكون إلا لله وحده، وهذا أساس دين الإسلام.",
+        },
+      },
+      "10": {
+        id: "10",
+        type_que: "السؤال العاشر",
+        question: "ما معناها",
+        answer: "لا معبود بحق إلا الله .",
+        audio_url: "/elaqida/10",
+        words: [
+          {
+            text: "سؤال",
+            start: 177,
+            end: 557,
+          },
+          {
+            text: "العاشر",
+            start: 557,
+            end: 1437,
+          },
+          {
+            text: "ما",
+            start: 1437,
+            end: 2017,
+          },
+          {
+            text: "معناها؟",
+            start: 2017,
+            end: 3577,
+          },
+          {
+            text: "الإجابة",
+            start: 3577,
+            end: 4537,
+          },
+          {
+            text: "لا",
+            start: 4537,
+            end: 5537,
+          },
+          {
+            text: "معبود",
+            start: 5537,
+            end: 6277,
+          },
+          {
+            text: "بحق",
+            start: 6277,
+            end: 6897,
+          },
+          {
+            text: "إلا",
+            start: 6897,
+            end: 7877,
+          },
+          {
+            text: "الله.",
+            start: 7877,
+            end: 8297,
+          },
+        ],
+        mainEntity: {
+          comment: "هذا السؤال والجواب هما جزء أساسي من عقيدة المسلم.",
+          description: [
+            {
+              type: "desQuestion",
+              alternateName: "السؤال: ما معناها؟",
+              ListItem: [
+                {
+                  id: "dq-1",
+                  item: "المقصود هنا: ما معنى كلمة التوحيد 'لا إله إلا الله'؟",
+                },
+              ],
+            },
+            {
+              type: "desAnswer",
+              alternateName: "الجواب: لا معبود بحق إلا الله.",
+              ListItem: [
+                {
+                  id: "da-1",
+                  item: "لا معبود بحق يعني لا يوجد أحد يستحق أن نعبده أو نصلي له أو ندعوه.",
+                },
+                {
+                  id: "da-2",
+                  item: "إلا الله وحده سبحانه هو الذي يستحق العبادة لأنه الخالق والرازق والمدبّر.",
+                },
+              ],
+            },
+          ],
+          acceptedanswer:
+            "المعنى العام: كل ما في الكون لا يستحق العبادة إلا الله وحده، فلا نعبد بشرًا ولا حجرًا ولا أي شيء غيره.",
+        },
+      },
+    };
+
+-->
+
+
+
+
+/*
+ *   This content is licensed according to the W3C Software License at
+ *   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
+ */
+
+'use strict';
+
+var aria = aria || {};
+
+/**
+ * ARIA Grid Examples
+ *
+ * @function onload
+ * @description Initialize the grid examples once the page has loaded
+ */
+
+window.addEventListener('load', function () {
+  // Setup Example 1
+  if (document.getElementById('ex1-grid')) {
+    new aria.Grid(document.getElementById('ex1-grid'));
+
+    // Setup NUX; activates when the first grid cell is focused
+    var gridNUX = document.getElementById('grid-nux');
+    var firstGridCell = document.querySelector('#ex1-grid [tabindex="0"]');
+    var NUXCloseButton = document.getElementById('close-nux-button');
+    var closeNUX = function () {
+      aria.Utils.addClass(gridNUX, 'hidden');
+      firstGridCell.focus();
+    };
+    var setupInstructions = function () {
+      firstGridCell.removeEventListener('focus', setupInstructions);
+      aria.Utils.removeClass(gridNUX, 'hidden');
+
+      NUXCloseButton.addEventListener('click', closeNUX);
+      NUXCloseButton.addEventListener('keyup', function (event) {
+        if (event.which === aria.KeyCode.RETURN) {
+          closeNUX();
+        }
+      });
+    };
+    firstGridCell.addEventListener('focus', setupInstructions);
+  }
+
+  // Setup Example 2
+  if (document.getElementById('ex2-grid')) {
+    var ex2Grid = new aria.Grid(document.getElementById('ex2-grid'));
+
+    new PillList(
+      ex2Grid,
+      document.getElementById('add-recipient-input'),
+      document.getElementById('add-recipient-button'),
+      document.getElementById('form-action-text')
+    );
+  }
+
+  // Setup Example 3
+  if (document.getElementById('ex3-grid')) {
+    var ex3Grid = new aria.Grid(document.getElementById('ex3-grid'));
+    var startIndexText = document.getElementById('ex3_start_index');
+    var endIndexText = document.getElementById('ex3_end_index');
+    var previousButton = document.getElementById('ex3_pageup_button');
+    var nextButton = document.getElementById('ex3_pagedown_button');
+    ex3Grid.setPaginationChangeHandler(function (startIndex, endIndex) {
+      startIndexText.innerText = startIndex + 1;
+      endIndexText.innerText = endIndex + 1;
+      if (startIndex <= 0) {
+        previousButton.setAttribute('disabled', 'true');
+      } else {
+        previousButton.removeAttribute('disabled');
+      }
+      if (endIndex >= 18) {
+        nextButton.setAttribute('disabled', 'true');
+      } else {
+        nextButton.removeAttribute('disabled');
+      }
+    });
+    previousButton.addEventListener('click', ex3Grid.movePageUp.bind(ex3Grid));
+    nextButton.addEventListener('click', ex3Grid.movePageDown.bind(ex3Grid));
+  }
+});
+
+function PillList(grid, input, submitButton, formUpdateText) {
+  // Hardcoded to work for example 2
+  this.pillIDs = { length: 2, 1: true, 2: true };
+  this.nextPillID = 3;
+  this.grid = grid;
+  this.input = input;
+  this.submitButton = submitButton;
+  this.formUpdateText = formUpdateText;
+
+  this.input.addEventListener('keydown', this.checkSubmitItem.bind(this));
+  this.submitButton.addEventListener('click', this.submitItemForm.bind(this));
+  this.grid.gridNode.addEventListener('click', this.checkRemovePill.bind(this));
+  this.grid.gridNode.addEventListener(
+    'keydown',
+    this.checkRemovePill.bind(this)
+  );
+}
+
+PillList.prototype.checkSubmitItem = function (event) {
+  var key = event.which || event.keyCode;
+
+  if (key === aria.KeyCode.RETURN) {
+    this.submitItemForm();
+  }
+};
+
+PillList.prototype.getRecipientsString = function () {
+  var recipientCount = this.pillIDs.length;
+  if (recipientCount === 1) {
+    return '1 recipient total.';
+  } else {
+    return recipientCount + ' recipients total.';
+  }
+};
+
+PillList.prototype.submitItemForm = function () {
+  var newItem = this.input.value;
+  this.addPillItem(newItem);
+  this.input.value = '';
+  this.input.focus();
+  this.formUpdateText.innerText =
+    newItem + ' added. ' + this.getRecipientsString();
+};
+
+PillList.prototype.addPillItem = function (recipientName) {
+  var id = this.nextPillID;
+
+  if (!recipientName) {
+    return;
+  }
+
+  var newPillItem = document.createElement('div');
+  newPillItem.setAttribute('role', 'row');
+  newPillItem.setAttribute('data-id', 'id');
+  newPillItem.className = 'pill-item';
+
+  newPillItem.innerHTML =
+    '<span role="gridcell">' +
+    '<a id="r' +
+    id +
+    '" class="pill-name" tabindex="-1" href="#">' +
+    recipientName +
+    '</a>' +
+    '</span>' +
+    '<span role="gridcell">' +
+    '<span id="rb' +
+    id +
+    '" class="pill-remove" tabindex="-1" role="button"' +
+    'aria-label="Remove" aria-labelledby="rb' +
+    id +
+    ' r' +
+    id +
+    '">' +
+    'X' +
+    '</span>' +
+    '</span>';
+
+  this.grid.gridNode.append(newPillItem);
+  this.grid.setupFocusGrid();
+
+  if (this.grid.grid.length === 1) {
+    this.grid.focusedRow = undefined;
+    this.grid.focusedCol = undefined;
+    this.grid.setFocusPointer(0, 0);
+  }
+
+  this.nextPillID++;
+  this.pillIDs[id] = true;
+  this.pillIDs.length++;
+};
+
+PillList.prototype.checkRemovePill = function (event) {
+  var pillItem, pillID, pillName;
+  var isClickEvent = event.type === 'click';
+  var key = event.which || event.keyCode;
+
+  if (
+    !isClickEvent &&
+    key !== aria.KeyCode.RETURN &&
+    key !== aria.KeyCode.SPACE
+  ) {
+    return;
+  }
+
+  if (event.target.className === 'pill-remove') {
+    pillItem = event.target.parentNode.parentNode;
+    pillID = pillItem.getAttribute('data-id');
+    pillName = pillItem.querySelector('.pill-name').innerText;
+  } else {
+    return;
+  }
+
+  delete this.pillIDs[pillID];
+  this.pillIDs.length--;
+  this.formUpdateText.innerText =
+    pillName + ' removed. ' + this.getRecipientsString();
+
+  pillItem.remove();
+  this.grid.setupFocusGrid();
+
+  if (this.grid.isValidCell(this.grid.focusedRow, this.grid.focusedCol)) {
+    // First, try to focus on the next pill
+    this.grid.focusCell(this.grid.focusedRow, this.grid.focusedCol);
+  } else if (
+    this.grid.isValidCell(--this.grid.focusedRow, this.grid.focusedCol)
+  ) {
+    // If there is no next pill, try to focus on the previous pill
+    this.grid.focusCell(this.grid.focusedRow, this.grid.focusedCol);
+  }
+};
+/*
+ *   This content is licensed according to the W3C Software License at
+ *   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
+ */
+
+'use strict';
+
+/**
+ * @namespace aria
+ */
+var aria = aria || {};
+
+/**
+ * @description
+ *  Values for aria-sort
+ */
+aria.SortType = {
+  ASCENDING: 'ascending',
+  DESCENDING: 'descending',
+  NONE: 'none',
+};
+
+/**
+ * @description
+ *  DOM Selectors to find the grid components
+ */
+aria.GridSelector = {
+  ROW: 'tr, [role="row"]',
+  CELL: 'th, td, [role="gridcell"]',
+  SCROLL_ROW: 'tr:not([data-fixed]), [role="row"]',
+  SORT_HEADER: 'th[aria-sort]',
+  TABBABLE: '[tabindex="0"]',
+};
+
+/**
+ * @description
+ *  CSS Class names
+ */
+aria.CSSClass = {
+  HIDDEN: 'hidden',
+};
+
+/**
+ * @class
+ * @description
+ *  Grid object representing the state and interactions for a grid widget
+ *
+ *  Assumptions:
+ *  All focusable cells initially have tabindex="-1"
+ *  Produces a fully filled in mxn grid (with no holes)
+ * @param gridNode
+ *  The DOM node pointing to the grid
+ */
+aria.Grid = function (gridNode) {
+  this.navigationDisabled = false;
+  this.gridNode = gridNode;
+  this.paginationEnabled = this.gridNode.hasAttribute('data-per-page');
+  this.shouldWrapCols = this.gridNode.hasAttribute('data-wrap-cols');
+  this.shouldWrapRows = this.gridNode.hasAttribute('data-wrap-rows');
+  this.shouldRestructure = this.gridNode.hasAttribute('data-restructure');
+  this.topIndex = 0;
+
+  this.keysIndicator = document.getElementById('arrow-keys-indicator');
+
+  aria.Utils.bindMethods(
+    this,
+    'checkFocusChange',
+    'checkPageChange',
+    'checkRestructureGrid',
+    'delegateButtonHandler',
+    'focusClickedCell',
+    'restructureGrid',
+    'showKeysIndicator',
+    'hideKeysIndicator'
+  );
+  this.setupFocusGrid();
+  this.setFocusPointer(0, 0);
+
+  if (this.paginationEnabled) {
+    this.setupPagination();
+  } else {
+    this.perPage = this.grid.length;
+  }
+
+  this.registerEvents();
+};
+
+/**
+ * @description
+ *  Creates a 2D array of the focusable cells in the grid.
+ */
+aria.Grid.prototype.setupFocusGrid = function () {
+  this.grid = [];
+
+  Array.prototype.forEach.call(
+    this.gridNode.querySelectorAll(aria.GridSelector.ROW),
+    function (row) {
+      var rowCells = [];
+
+      Array.prototype.forEach.call(
+        row.querySelectorAll(aria.GridSelector.CELL),
+        function (cell) {
+          var focusableSelector = '[tabindex]';
+
+          if (aria.Utils.matches(cell, focusableSelector)) {
+            rowCells.push(cell);
+          } else {
+            var focusableCell = cell.querySelector(focusableSelector);
+
+            if (focusableCell) {
+              rowCells.push(focusableCell);
+            }
+          }
+        }.bind(this)
+      );
+
+      if (rowCells.length) {
+        this.grid.push(rowCells);
+      }
+    }.bind(this)
+  );
+
+  if (this.paginationEnabled) {
+    this.setupIndices();
+  }
+};
+
+/**
+ * @description
+ *  If possible, set focus pointer to the cell with the specified coordinates
+ * @param row
+ *  The index of the cell's row
+ * @param col
+ *  The index of the cell's column
+ * @returns {boolean}
+ *  Returns whether or not the focus could be set on the cell.
+ */
+aria.Grid.prototype.setFocusPointer = function (row, col) {
+  if (!this.isValidCell(row, col)) {
+    return false;
+  }
+
+  if (this.isHidden(row, col)) {
+    return false;
+  }
+
+  if (!isNaN(this.focusedRow) && !isNaN(this.focusedCol)) {
+    this.grid[this.focusedRow][this.focusedCol].setAttribute('tabindex', -1);
+  }
+
+  this.grid[row][col].removeEventListener('focus', this.showKeysIndicator);
+  this.grid[row][col].removeEventListener('blur', this.hideKeysIndicator);
+
+  // Disable navigation if focused on an input
+  this.navigationDisabled = aria.Utils.matches(this.grid[row][col], 'input');
+
+  this.grid[row][col].setAttribute('tabindex', 0);
+  this.focusedRow = row;
+  this.focusedCol = col;
+
+  this.grid[row][col].addEventListener('focus', this.showKeysIndicator);
+  this.grid[row][col].addEventListener('blur', this.hideKeysIndicator);
+
+  return true;
+};
+
+/**
+ * @param row
+ *  The index of the cell's row
+ * @param col
+ *  The index of the cell's column
+ * @returns {boolean}
+ *  Returns whether or not the coordinates are within the grid's boundaries.
+ */
+aria.Grid.prototype.isValidCell = function (row, col) {
+  return (
+    !isNaN(row) &&
+    !isNaN(col) &&
+    row >= 0 &&
+    col >= 0 &&
+    this.grid &&
+    this.grid.length &&
+    row < this.grid.length &&
+    col < this.grid[row].length
+  );
+};
+
+/**
+ * @param row
+ *  The index of the cell's row
+ * @param col
+ *  The index of the cell's column
+ * @returns {boolean}
+ *  Returns whether or not the cell has been hidden.
+ */
+aria.Grid.prototype.isHidden = function (row, col) {
+  // prettier-ignore
+  var cell = this.gridNode
+    .querySelectorAll(aria.GridSelector.ROW)[row]
+    .querySelectorAll(aria.GridSelector.CELL)[col];
+  return aria.Utils.hasClass(cell, aria.CSSClass.HIDDEN);
+};
+
+/**
+ * @description
+ *  Clean up grid events
+ */
+aria.Grid.prototype.clearEvents = function () {
+  this.gridNode.removeEventListener('keydown', this.checkFocusChange);
+  this.gridNode.removeEventListener('keydown', this.delegateButtonHandler);
+  this.gridNode.removeEventListener('click', this.focusClickedCell);
+  this.gridNode.removeEventListener('click', this.delegateButtonHandler);
+
+  if (this.paginationEnabled) {
+    this.gridNode.removeEventListener('keydown', this.checkPageChange);
+  }
+
+  if (this.shouldRestructure) {
+    window.removeEventListener('resize', this.checkRestructureGrid);
+  }
+
+  this.grid[this.focusedRow][this.focusedCol].removeEventListener(
+    'focus',
+    this.showKeysIndicator
+  );
+  this.grid[this.focusedRow][this.focusedCol].removeEventListener(
+    'blur',
+    this.hideKeysIndicator
+  );
+};
+
+/**
+ * @description
+ *  Register grid events
+ */
+aria.Grid.prototype.registerEvents = function () {
+  this.clearEvents();
+
+  this.gridNode.addEventListener('keydown', this.checkFocusChange);
+  this.gridNode.addEventListener('keydown', this.delegateButtonHandler);
+  this.gridNode.addEventListener('click', this.focusClickedCell);
+  this.gridNode.addEventListener('click', this.delegateButtonHandler);
+
+  if (this.paginationEnabled) {
+    this.gridNode.addEventListener('keydown', this.checkPageChange);
+  }
+
+  if (this.shouldRestructure) {
+    window.addEventListener('resize', this.checkRestructureGrid);
+  }
+};
+
+/**
+ * @description
+ *  Focus on the cell in the specified row and column
+ * @param row
+ *  The index of the cell's row
+ * @param col
+ *  The index of the cell's column
+ */
+aria.Grid.prototype.focusCell = function (row, col) {
+  if (this.setFocusPointer(row, col)) {
+    this.grid[row][col].focus();
+  }
+};
+
+aria.Grid.prototype.showKeysIndicator = function () {
+  if (this.keysIndicator) {
+    aria.Utils.removeClass(this.keysIndicator, 'hidden');
+  }
+};
+
+aria.Grid.prototype.hideKeysIndicator = function () {
+  if (
+    this.keysIndicator &&
+    this.grid[this.focusedRow][this.focusedCol].tabIndex === 0
+  ) {
+    aria.Utils.addClass(this.keysIndicator, 'hidden');
+  }
+};
+
+/**
+ * @description
+ *  Triggered on keydown. Checks if an arrow key was pressed, and (if possible)
+ *  moves focus to the next valid cell in the direction of the arrow key.
+ * @param event
+ *  Keydown event
+ */
+aria.Grid.prototype.checkFocusChange = function (event) {
+  if (!event || this.navigationDisabled) {
+    return;
+  }
+
+  this.findFocusedItem(event.target);
+
+  var key = event.which || event.keyCode;
+  var rowCaret = this.focusedRow;
+  var colCaret = this.focusedCol;
+  var nextCell;
+
+  switch (key) {
+    case aria.KeyCode.UP:
+      nextCell = this.getNextVisibleCell(0, -1);
+      rowCaret = nextCell.row;
+      colCaret = nextCell.col;
+      break;
+    case aria.KeyCode.DOWN:
+      nextCell = this.getNextVisibleCell(0, 1);
+      rowCaret = nextCell.row;
+      colCaret = nextCell.col;
+      break;
+    case aria.KeyCode.LEFT:
+      nextCell = this.getNextVisibleCell(-1, 0);
+      rowCaret = nextCell.row;
+      colCaret = nextCell.col;
+      break;
+    case aria.KeyCode.RIGHT:
+      nextCell = this.getNextVisibleCell(1, 0);
+      rowCaret = nextCell.row;
+      colCaret = nextCell.col;
+      break;
+    case aria.KeyCode.HOME:
+      if (event.ctrlKey) {
+        rowCaret = 0;
+      }
+      colCaret = 0;
+      break;
+    case aria.KeyCode.END:
+      if (event.ctrlKey) {
+        rowCaret = this.grid.length - 1;
+      }
+      colCaret = this.grid[this.focusedRow].length - 1;
+      break;
+    default:
+      return;
+  }
+
+  if (this.paginationEnabled) {
+    if (rowCaret < this.topIndex) {
+      this.showFromRow(rowCaret, true);
+    }
+
+    if (rowCaret >= this.topIndex + this.perPage) {
+      this.showFromRow(rowCaret, false);
+    }
+  }
+
+  this.focusCell(rowCaret, colCaret);
+  event.preventDefault();
+};
+
+/**
+ * @description
+ *  Reset focused row and col if it doesn't match focusedRow and focusedCol
+ * @param focusedTarget
+ *  Element that is currently focused by browser
+ */
+aria.Grid.prototype.findFocusedItem = function (focusedTarget) {
+  var focusedCell = this.grid[this.focusedRow][this.focusedCol];
+
+  if (focusedCell === focusedTarget || focusedCell.contains(focusedTarget)) {
+    return;
+  }
+
+  for (var i = 0; i < this.grid.length; i++) {
+    for (var j = 0; j < this.grid[i].length; j++) {
+      if (
+        this.grid[i][j] === focusedTarget ||
+        this.grid[i][j].contains(focusedTarget)
+      ) {
+        this.setFocusPointer(i, j);
+        return;
+      }
+    }
+  }
+};
+
+/**
+ * @description
+ *  Triggered on click. Finds the cell that was clicked on and focuses on it.
+ * @param event
+ *  Keydown event
+ */
+aria.Grid.prototype.focusClickedCell = function (event) {
+  var clickedGridCell = this.findClosest(event.target, '[tabindex]');
+
+  for (var row = 0; row < this.grid.length; row++) {
+    for (var col = 0; col < this.grid[row].length; col++) {
+      if (this.grid[row][col] === clickedGridCell) {
+        this.setFocusPointer(row, col);
+
+        if (!aria.Utils.matches(clickedGridCell, 'button[aria-haspopup]')) {
+          // Don't focus if it's a menu button (focus should be set to menu)
+          this.focusCell(row, col);
+        }
+
+        return;
+      }
+    }
+  }
+};
+
+/**
+ * @description
+ *  Triggered on click. Checks if user clicked on a header with aria-sort.
+ *  If so, it sorts the column based on the aria-sort attribute.
+ * @param event
+ *  Keydown event
+ */
+aria.Grid.prototype.delegateButtonHandler = function (event) {
+  var key = event.which || event.keyCode;
+  var target = event.target;
+  var isClickEvent = event.type === 'click';
+
+  if (!target) {
+    return;
+  }
+
+  if (
+    target.parentNode &&
+    target.parentNode.matches('th[aria-sort]') &&
+    (isClickEvent || key === aria.KeyCode.SPACE || key === aria.KeyCode.RETURN)
+  ) {
+    event.preventDefault();
+    this.handleSort(target.parentNode);
+  }
+
+  if (
+    aria.Utils.matches(target, '.editable-text, .edit-text-button') &&
+    (isClickEvent || key === aria.KeyCode.RETURN)
+  ) {
+    event.preventDefault();
+    this.toggleEditMode(this.findClosest(target, '.editable-text'), true, true);
+  }
+
+  if (
+    aria.Utils.matches(target, '.edit-text-input') &&
+    (key === aria.KeyCode.RETURN || key === aria.KeyCode.ESC)
+  ) {
+    event.preventDefault();
+    this.toggleEditMode(
+      this.findClosest(target, '.editable-text'),
+      false,
+      key === aria.KeyCode.RETURN
+    );
+  }
+};
+
+/**
+ * @description
+ *  Toggles the mode of an editable cell between displaying the edit button
+ *  and displaying the editable input.
+ * @param editCell
+ *  Cell to toggle
+ * @param toggleOn
+ *  Whether to show or hide edit input
+ * @param updateText
+ *  Whether or not to update the button text with the input text
+ */
+aria.Grid.prototype.toggleEditMode = function (editCell, toggleOn, updateText) {
+  var onClassName = toggleOn ? 'edit-text-input' : 'edit-text-button';
+  var offClassName = toggleOn ? 'edit-text-button' : 'edit-text-input';
+  var onNode = editCell.querySelector('.' + onClassName);
+  var offNode = editCell.querySelector('.' + offClassName);
+
+  if (toggleOn) {
+    onNode.value = offNode.innerText;
+  } else if (updateText) {
+    onNode.innerText = offNode.value;
+  }
+
+  aria.Utils.addClass(offNode, aria.CSSClass.HIDDEN);
+  aria.Utils.removeClass(onNode, aria.CSSClass.HIDDEN);
+  offNode.setAttribute('tabindex', -1);
+  onNode.setAttribute('tabindex', 0);
+  onNode.focus();
+  this.grid[this.focusedRow][this.focusedCol] = onNode;
+  this.navigationDisabled = toggleOn;
+};
+
+/**
+ * @description
+ *  Sorts the column below the header node, based on the aria-sort attribute.
+ *  aria-sort="none" => aria-sort="ascending"
+ *  aria-sort="ascending" => aria-sort="descending"
+ *  All other headers with aria-sort are reset to "none"
+ *
+ *  Note: This implementation assumes that there is no pagination on the grid.
+ * @param headerNode
+ *  Header DOM node
+ */
+aria.Grid.prototype.handleSort = function (headerNode) {
+  var columnIndex = headerNode.cellIndex;
+  var sortType = headerNode.getAttribute('aria-sort');
+
+  if (sortType === aria.SortType.ASCENDING) {
+    sortType = aria.SortType.DESCENDING;
+  } else {
+    sortType = aria.SortType.ASCENDING;
+  }
+
+  var comparator = function (row1, row2) {
+    var row1Text = row1.children[columnIndex].innerText;
+    var row2Text = row2.children[columnIndex].innerText;
+    var row1Value = parseInt(row1Text.replace(/[^0-9.]+/g, ''));
+    var row2Value = parseInt(row2Text.replace(/[^0-9.]+/g, ''));
+
+    if (sortType === aria.SortType.ASCENDING) {
+      return row1Value - row2Value;
+    } else {
+      return row2Value - row1Value;
+    }
+  };
+
+  this.sortRows(comparator);
+  this.setupFocusGrid();
+
+  Array.prototype.forEach.call(
+    this.gridNode.querySelectorAll(aria.GridSelector.SORT_HEADER),
+    function (headerCell) {
+      headerCell.setAttribute('aria-sort', aria.SortType.NONE);
+    }
+  );
+
+  headerNode.setAttribute('aria-sort', sortType);
+};
+
+/**
+ * @description
+ *  Sorts the grid's rows according to the specified compareFn
+ * @param compareFn
+ *  Comparison function to sort the rows
+ */
+aria.Grid.prototype.sortRows = function (compareFn) {
+  var rows = this.gridNode.querySelectorAll(aria.GridSelector.ROW);
+  var rowWrapper = rows[0].parentNode;
+  var dataRows = Array.prototype.slice.call(rows, 1);
+
+  dataRows.sort(compareFn);
+
+  dataRows.forEach(
+    function (row) {
+      rowWrapper.appendChild(row);
+    }.bind(this)
+  );
+};
+
+/**
+ * @description
+ *  Adds aria-rowindex and aria-colindex to the cells in the grid
+ */
+aria.Grid.prototype.setupIndices = function () {
+  var rows = this.gridNode.querySelectorAll(aria.GridSelector.ROW);
+
+  for (var row = 0; row < rows.length; row++) {
+    var cols = rows[row].querySelectorAll(aria.GridSelector.CELL);
+    rows[row].setAttribute('aria-rowindex', row + 1);
+
+    for (var col = 0; col < cols.length; col++) {
+      cols[col].setAttribute('aria-colindex', col + 1);
+    }
+  }
+};
+
+/**
+ * @description
+ *  Determines the per page attribute of the grid, and shows/hides rows
+ *  accordingly.
+ */
+aria.Grid.prototype.setupPagination = function () {
+  this.onPaginationChange = this.onPaginationChange || function () {};
+  this.perPage = parseInt(this.gridNode.getAttribute('data-per-page'));
+  this.showFromRow(0, true);
+};
+
+aria.Grid.prototype.setPaginationChangeHandler = function (onPaginationChange) {
+  this.onPaginationChange = onPaginationChange;
+};
+
+/**
+ * @description
+ *  Check if page up or page down was pressed, and show the next page if so.
+ * @param event
+ *  Keydown event
+ */
+aria.Grid.prototype.checkPageChange = function (event) {
+  if (!event) {
+    return;
+  }
+
+  var key = event.which || event.keyCode;
+
+  if (key === aria.KeyCode.PAGE_UP) {
+    event.preventDefault();
+    this.movePageUp();
+  } else if (key === aria.KeyCode.PAGE_DOWN) {
+    event.preventDefault();
+    this.movePageDown();
+  }
+};
+
+aria.Grid.prototype.movePageUp = function () {
+  var startIndex = Math.max(this.perPage - 1, this.topIndex - 1);
+  this.showFromRow(startIndex, false);
+  this.focusCell(startIndex, this.focusedCol);
+};
+
+aria.Grid.prototype.movePageDown = function () {
+  var startIndex = this.topIndex + this.perPage;
+  this.showFromRow(startIndex, true);
+  this.focusCell(startIndex, this.focusedCol);
+};
+
+/**
+ * @description
+ *  Scroll the specified row into view in the specified direction
+ * @param startIndex
+ *  Row index to use as the start index
+ * @param scrollDown
+ *  Whether to scroll the new page above or below the row index
+ */
+aria.Grid.prototype.showFromRow = function (startIndex, scrollDown) {
+  var dataRows = this.gridNode.querySelectorAll(aria.GridSelector.SCROLL_ROW);
+  var reachedTop = false;
+  var firstIndex = -1;
+  var endIndex = -1;
+
+  if (startIndex < 0 || startIndex >= dataRows.length) {
+    return;
+  }
+
+  for (var i = 0; i < dataRows.length; i++) {
+    if (
+      (scrollDown && i >= startIndex && i < startIndex + this.perPage) ||
+      (!scrollDown && i <= startIndex && i > startIndex - this.perPage)
+    ) {
+      aria.Utils.removeClass(dataRows[i], aria.CSSClass.HIDDEN);
+
+      if (!reachedTop) {
+        this.topIndex = i;
+        reachedTop = true;
+      }
+
+      if (firstIndex < 0) {
+        firstIndex = i;
+      }
+      endIndex = i;
+    } else {
+      aria.Utils.addClass(dataRows[i], aria.CSSClass.HIDDEN);
+    }
+  }
+  this.onPaginationChange(firstIndex, endIndex);
+};
+
+/**
+ * @description
+ *  Throttle restructuring to only happen every 300ms
+ */
+aria.Grid.prototype.checkRestructureGrid = function () {
+  if (this.waitingToRestructure) {
+    return;
+  }
+
+  this.waitingToRestructure = true;
+
+  setTimeout(this.restructureGrid, 300);
+};
+
+/**
+ * @description
+ *  Restructure grid based on the size.
+ */
+aria.Grid.prototype.restructureGrid = function () {
+  this.waitingToRestructure = false;
+
+  var gridWidth = this.gridNode.offsetWidth;
+  var cells = this.gridNode.querySelectorAll(aria.GridSelector.CELL);
+  var currentWidth = 0;
+
+  var focusedElement = this.gridNode.querySelector(aria.GridSelector.TABBABLE);
+  var shouldRefocus = document.activeElement === focusedElement;
+  var focusedIndex = this.focusedRow * this.grid[0].length + this.focusedCol;
+
+  var newRow = document.createElement('div');
+  newRow.setAttribute('role', 'row');
+  this.gridNode.innerHTML = '';
+  this.gridNode.append(newRow);
+
+  cells.forEach(function (cell) {
+    var cellWidth = cell.offsetWidth;
+
+    if (currentWidth > 0 && currentWidth >= gridWidth - cellWidth) {
+      newRow = document.createElement('div');
+      newRow.setAttribute('role', 'row');
+      this.gridNode.append(newRow);
+      currentWidth = 0;
+    }
+
+    newRow.append(cell);
+    currentWidth += cellWidth;
+  });
+
+  this.setupFocusGrid();
+
+  this.focusedRow = Math.floor(focusedIndex / this.grid[0].length);
+  this.focusedCol = focusedIndex % this.grid[0].length;
+
+  if (shouldRefocus) {
+    this.focusCell(this.focusedRow, this.focusedCol);
+  }
+};
+
+/**
+ * @description
+ * Get next cell to the right or left (direction) of the focused
+ * cell.
+ * @param currRow
+ * Row index to start searching from
+ * @param currCol
+ * Column index to start searching from
+ * @param directionX
+ * X direction for where to check for cells. +1 to check to the right, -1 to
+ * check to the left
+ * @param directionY
+ * @returns {false | object}
+ * Indices of the next cell in the specified direction. Returns the focused
+ * cell if none are found.
+ */
+aria.Grid.prototype.getNextCell = function (
+  currRow,
+  currCol,
+  directionX,
+  directionY
+) {
+  var row = currRow + directionY;
+  var col = currCol + directionX;
+  var rowCount = this.grid.length;
+  var isLeftRight = directionX !== 0;
+
+  if (!rowCount) {
+    return false;
+  }
+
+  var colCount = this.grid[0].length;
+
+  if (this.shouldWrapCols && isLeftRight) {
+    if (col < 0) {
+      col = colCount - 1;
+      row--;
+    }
+
+    if (col >= colCount) {
+      col = 0;
+      row++;
+    }
+  }
+
+  if (this.shouldWrapRows && !isLeftRight) {
+    if (row < 0) {
+      col--;
+      row = rowCount - 1;
+      if (this.grid[row] && col >= 0 && !this.grid[row][col]) {
+        // Sometimes the bottom row is not completely filled in. In this case,
+        // jump to the next filled in cell.
+        row--;
+      }
+    } else if (row >= rowCount || !this.grid[row][col]) {
+      row = 0;
+      col++;
+    }
+  }
+
+  if (this.isValidCell(row, col)) {
+    return {
+      row: row,
+      col: col,
+    };
+  } else if (this.isValidCell(currRow, currCol)) {
+    return {
+      row: currRow,
+      col: currCol,
+    };
+  } else {
+    return false;
+  }
+};
+
+/**
+ * @param directionX
+ * @param directionY
+ * @description
+Get next visible column to the right or left (direction) of the focused
+ * cell.
+ * @returns {false | object}
+ * Indices of the next visible cell in the specified direction. If no visible
+ * cells are found, returns false if the current cell is hidden and returns
+ * the current cell if it is not hidden.
+ */
+aria.Grid.prototype.getNextVisibleCell = function (directionX, directionY) {
+  var nextCell = this.getNextCell(
+    this.focusedRow,
+    this.focusedCol,
+    directionX,
+    directionY
+  );
+
+  if (!nextCell) {
+    return false;
+  }
+
+  while (this.isHidden(nextCell.row, nextCell.col)) {
+    var currRow = nextCell.row;
+    var currCol = nextCell.col;
+
+    nextCell = this.getNextCell(currRow, currCol, directionX, directionY);
+
+    if (currRow === nextCell.row && currCol === nextCell.col) {
+      // There are no more cells to try if getNextCell returns the current cell
+      return false;
+    }
+  }
+
+  return nextCell;
+};
+
+/**
+ * @description
+ *  Show or hide the cells in the specified column
+ * @param columnIndex
+ *  Index of the column to toggle
+ * @param isShown
+ *  Whether or not to show the column
+ */
+aria.Grid.prototype.toggleColumn = function (columnIndex, isShown) {
+  var cellSelector = '[aria-colindex="' + columnIndex + '"]';
+  var columnCells = this.gridNode.querySelectorAll(cellSelector);
+
+  Array.prototype.forEach.call(columnCells, function (cell) {
+    if (isShown) {
+      aria.Utils.removeClass(cell, aria.CSSClass.HIDDEN);
+    } else {
+      aria.Utils.addClass(cell, aria.CSSClass.HIDDEN);
+    }
+  });
+
+  if (!isShown && this.focusedCol === columnIndex - 1) {
+    // If focus was set on the hidden column, shift focus to the right
+    var nextCell = this.getNextVisibleCell(1, 0);
+    if (nextCell) {
+      this.setFocusPointer(nextCell.row, nextCell.col);
+    }
+  }
+};
+
+/**
+ * @description
+ *  Find the closest element matching the selector. Only checks parent and
+ *  direct children.
+ * @param element
+ *  Element to start searching from
+ * @param selector
+ *  Index of the column to toggle
+ * @returns {object} matching element
+ */
+aria.Grid.prototype.findClosest = function (element, selector) {
+  if (aria.Utils.matches(element, selector)) {
+    return element;
+  }
+
+  if (aria.Utils.matches(element.parentNode, selector)) {
+    return element.parentNode;
+  }
+
+  return element.querySelector(selector);
+};
+'use strict';
+/**
+ * @namespace aria
+ */
+
+var aria = aria || {};
+
+/**
+ * @description
+ *  Key code constants
+ */
+aria.KeyCode = {
+  BACKSPACE: 8,
+  TAB: 9,
+  RETURN: 13,
+  SHIFT: 16,
+  ESC: 27,
+  SPACE: 32,
+  PAGE_UP: 33,
+  PAGE_DOWN: 34,
+  END: 35,
+  HOME: 36,
+  LEFT: 37,
+  UP: 38,
+  RIGHT: 39,
+  DOWN: 40,
+  DELETE: 46,
+};
+
+aria.Utils = aria.Utils || {};
+
+// Polyfill src https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
+aria.Utils.matches = function (element, selector) {
+  if (!Element.prototype.matches) {
+    Element.prototype.matches =
+      Element.prototype.matchesSelector ||
+      Element.prototype.mozMatchesSelector ||
+      Element.prototype.msMatchesSelector ||
+      Element.prototype.oMatchesSelector ||
+      Element.prototype.webkitMatchesSelector ||
+      function (s) {
+        var matches = element.parentNode.querySelectorAll(s);
+        var i = matches.length;
+        while (--i >= 0 && matches.item(i) !== this) {
+          // empty
+        }
+        return i > -1;
+      };
+  }
+
+  return element.matches(selector);
+};
+
+aria.Utils.remove = function (item) {
+  if (item.remove && typeof item.remove === 'function') {
+    return item.remove();
+  }
+  if (
+    item.parentNode &&
+    item.parentNode.removeChild &&
+    typeof item.parentNode.removeChild === 'function'
+  ) {
+    return item.parentNode.removeChild(item);
+  }
+  return false;
+};
+
+aria.Utils.isFocusable = function (element) {
+  if (element.tabIndex < 0) {
+    return false;
+  }
+
+  if (element.disabled) {
+    return false;
+  }
+
+  switch (element.nodeName) {
+    case 'A':
+      return !!element.href && element.rel != 'ignore';
+    case 'INPUT':
+      return element.type != 'hidden';
+    case 'BUTTON':
+    case 'SELECT':
+    case 'TEXTAREA':
+      return true;
+    default:
+      return false;
+  }
+};
+
+aria.Utils.getAncestorBySelector = function (element, selector) {
+  if (!aria.Utils.matches(element, selector + ' ' + element.tagName)) {
+    // Element is not inside an element that matches selector
+    return null;
+  }
+
+  // Move up the DOM tree until a parent matching the selector is found
+  var currentNode = element;
+  var ancestor = null;
+  while (ancestor === null) {
+    if (aria.Utils.matches(currentNode.parentNode, selector)) {
+      ancestor = currentNode.parentNode;
+    } else {
+      currentNode = currentNode.parentNode;
+    }
+  }
+
+  return ancestor;
+};
+
+aria.Utils.hasClass = function (element, className) {
+  return new RegExp('(\\s|^)' + className + '(\\s|$)').test(element.className);
+};
+
+aria.Utils.addClass = function (element, className) {
+  if (!aria.Utils.hasClass(element, className)) {
+    element.className += ' ' + className;
+  }
+};
+
+aria.Utils.removeClass = function (element, className) {
+  var classRegex = new RegExp('(\\s|^)' + className + '(\\s|$)');
+  element.className = element.className.replace(classRegex, ' ').trim();
+};
+
+aria.Utils.bindMethods = function (object /* , ...methodNames */) {
+  var methodNames = Array.prototype.slice.call(arguments, 1);
+  methodNames.forEach(function (method) {
+    object[method] = object[method].bind(object);
+  });
+};

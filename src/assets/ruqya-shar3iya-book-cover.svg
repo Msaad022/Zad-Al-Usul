@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="120">
+  <rect width="100%" height="100%" fill="#f4f0e6" stroke="#6b4c2a" stroke-width="4"/>
+  
+  <!-- Decorative border pattern -->
+  <defs>
+    <pattern id="geom" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <polygon points="10,0 20,10 10,20 0,10" stroke="#6b4c2a" stroke-width="1" fill="none"/>
+    </pattern>
+  </defs>
+  
+  <rect x="5" y="5" width="70" height="110" fill="none" stroke="url(#geom)" stroke-width="4"/>
+  
+  <!-- Title -->
+  <text x="50%" y="23%" text-anchor="middle" font-family="Amiri, 'Scheherazade', serif" font-size="12" fill="#3b2d1f">
+    الرُّقية الشرعية
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="50%" y="40%" text-anchor="middle" font-family="Amiri, 'Scheherazade', serif" font-size="12" fill="#3b2d1f" style="&#10;">
+    أحكامها وآدابها 
+  </text>
+    <text x="50%" y="50%" text-anchor="middle" font-family="Amiri, 'Scheherazade', serif" font-size="12" fill="#3b2d1f" style="&#10;">
+     وضوابطها
+  </text>
+  <!-- Author Name with small ornaments -->
+  <circle cx="40%" cy="60%" r="3" stroke="#6b4c2a" stroke-width="1" fill="none"/>
+  <circle cx="60%" cy="60%" r="3" stroke="#6b4c2a" stroke-width="1" fill="none"/>
+  <text x="50%" y="75%" text-anchor="middle" font-family="Amiri, 'Scheherazade', serif" font-size="10" fill="#3b2d1f" style="&#10;">
+    محمد لطفي
+  </text>
+     <text x="50%" y="87%" text-anchor="middle" font-family="Amiri, 'Scheherazade', serif" font-size="10" fill="#3b2d1f" style="&#10;">
+     عبد الرازق
+  </text>
+</svg>

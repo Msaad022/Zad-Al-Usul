@@ -1,11 +1,89 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import {
+  ProfileSummary,
+  WorkExperience,
+  Education,
+  Publications,
+} from "../components/welcome";
+import { Header } from "../components";
+import Layout from "../layouts/Layout.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-	<Welcome />
+  <Fragment slot="head-meta">
+    <title>زاد الأصول | الموقع الرسمي</title>
+    <meta
+      name="description"
+      content="تعرف على السيرة الذاتية للشيخ الدكتور محمد لطفي عبد الرازق، وجهوده في إنشاء موقع لتدريس العقيدة الإسلامية والعلم الشرعي، وأبرز مؤلفاته مثل كتاب الرقية الشرعية."
+    />
+    <meta
+      name="keywords"
+      content="الشيخ محمد لطفي عبد الرازق, محمد لطفي, سيرة ذاتية, إمام وخطيب, عالم أزهري, داعية, جامعة الأزهر, مؤلفات دينية, الرقية الشرعية, زاد الأصول, مدونة الشيخ, العقيدة الإسلامية, تعليم, إسلام, دروس"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="زاد الأصول | الموقع الرسمي" />
+    <meta
+      property="og:description"
+      content="موقع دعوي إسلامي يقدم مقالات ومواد علمية ودروس شرعية وخطب من إعداد الشيخ محمد لطفي عبد الرازق."
+    />
+    <meta property="og:image" content="/favicon.svg" />
+    <meta property="og:url" content="https://www.example.com/" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="زاد الأصول | الموقع الرسمي" />
+    <meta
+      name="twitter:description"
+      content="موقع دعوي إسلامي يقدم مقالات ومواد علمية ودروس شرعية وخطب من إعداد الشيخ محمد لطفي عبد الرازق."
+    />
+    <meta name="twitter:image" content="/favicon.svg" />
+  </Fragment>
+  <!-- head-script -->
+  <Fragment slot="head-script">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "زاد الأصول",
+            "alternateName": [
+              "Zad Al-usul",
+              "example.com",
+              "مدونة الشيخ محمد لطفي"
+            ],
+            "url": "https://www.example.com/",
+            "mainEntity": {
+              "@type": "Person",
+              "@id": "#person"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "#person",
+            "name": "محمد لطفي عبد الرازق",
+            "url": "https://www.example.com/",
+            "image": "mohamed-lotfy-photo.webp",
+            "sameAs": "https://www.facebook.com/alshykh.mhmd.ltfy",
+            "jobTitle": "داعيه ( إمام وخطيب ومدرس ).",
+            "worksFor": {
+              "@type": "Organization",
+              "name": "وزارة الأوقاف المصريه"
+            }
+          }
+        ]
+      }
+    </script>
+  </Fragment>
+
+  <Header />
+  <ProfileSummary />
+  <WorkExperience />
+  <Education />
+  <Publications />
 </Layout>

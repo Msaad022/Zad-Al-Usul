@@ -1,0 +1,238 @@
+<button
+  id="transcript-btn"
+  class="toggle-transcript cursor-pointer"
+  aria-expanded="false"
+  aria-haspopup="grid"
+  aria-controls="ex1-grid"
+  aria-label="Turn on transcripts"
+  title="Turn on transcripts"
+>
+  <svg
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    width="24px"
+    height="24px"
+    viewBox="0 0 16 16"
+    version="1.1"
+  >
+    <path
+      class="fill-[#e7ecee] [.is-active_&]:fill-[#005a9c]"
+      fill="#"
+      d="M7 7v7h-7v-7.1c0-4.8 4.5-5.4 4.5-5.4l0.6 1.4c0 0-2 0.3-2.4 1.9-0.4 1.2 0.4 2.2 0.4 2.2h3.9z"
+    ></path>
+    <path
+      class="fill-[#e7ecee] [.is-active_&]:fill-[#005a9c]"
+      d="M16 7v7h-7v-7.1c0-4.8 4.5-5.4 4.5-5.4l0.6 1.4c0 0-2 0.3-2.4 1.9-0.4 1.2 0.4 2.2 0.4 2.2h3.9z"
+    ></path>
+  </svg>
+</button>
+
+<div
+  id="ex1-grid"
+  role="grid"
+  data-per-page="5"
+  class="list-links hidden [.is-active+&]:block mt-5"
+  data-wrap-cols="true"
+  data-wrap-rows="true"
+  aria-label="Video transcript"
+>
+  <div
+    role="row"
+    class="max-h-80 overflow-y-auto p-2.5 rounded-lg leading-[1.8] border"
+  >
+    <span role="gridcell" class="list-link"
+      ><a
+        tabindex="0"
+        href="#"
+        class="transition-[color] duration-[0.3s] mx-1.5"
+        >ARIA 1.1 Specification</a
+      ></span
+    >
+    <span role="gridcell" class="list-link"
+      ><a
+        tabindex="-1"
+        href="#"
+        class="transition-[color] duration-[0.3s] mx-1.5"
+        >Core Accessibility API Mappings 1.1</a
+      ></span
+    >
+    <span role="gridcell" class="list-link"
+      ><a
+        tabindex="-1"
+        href="#"
+        class="transition-[color] duration-[0.3s] mx-1.5">WAI-ARIA Overview</a
+      ></span
+    >
+    <span role="gridcell" class="list-link"
+      ><a
+        tabindex="-1"
+        href="#"
+        class="transition-[color] duration-[0.3s] mx-1.5">WCAG Overview</a
+      ></span
+    >
+    <span role="gridcell" class="list-link"
+      ><a
+        tabindex="-1"
+        href="#"
+        class="transition-[color] duration-[0.3s] mx-1.5">HTML Specification</a
+      ></span
+    >
+    <span role="gridcell" class="list-link"
+      ><a
+        tabindex="-1"
+        href="#"
+        class="transition-[color] duration-[0.3s] mx-1.5">SVG 2 Specification</a
+      ></span
+    >
+  </div>
+</div>
+
+<svg
+  class="fixed bottom-8 left-8 hidden"
+  aria-hidden="true"
+  id="svg-keys"
+  width="100"
+  height="60"
+  viewBox="0 0 140 100"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect x="55" y="10" width="35" height="35" rx="8" fill="black"></rect>
+  <polygon points="72,20 65,35 80,35" fill="white"></polygon>
+  <rect x="10" y="55" width="35" height="35" rx="8" fill="black"></rect>
+  <polygon points="18,73 33,65 33,80" fill="white"></polygon>
+  <rect x="55" y="55" width="35" height="35" rx="8" fill="black"></rect>
+  <polygon points="65,67 73,80 80,67" fill="white"></polygon>
+  <rect x="100" y="55" width="35" height="35" rx="8" fill="black"></rect>
+  <polygon points="110,67 110,80 125,73" fill="white"></polygon>
+</svg>
+
+<style>
+  [role="gridcell"]:focus,
+  [role="gridcell"] *:focus {
+    outline: #005a9c;
+    outline-style: dotted;
+    outline-width: 3px;
+  }
+  @media screen and (min-width: 1024px) {
+    #ex1-grid:focus-within + #svg-keys {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  class SimpleGrid {
+    private gridNode: HTMLElement;
+    private cells: HTMLAnchorElement[];
+    private focusedIndex: number = 0;
+
+    constructor(gridNode: HTMLElement) {
+      this.gridNode = gridNode;
+      this.cells = Array.from(
+        this.gridNode.querySelectorAll<HTMLAnchorElement>(
+          'span[role="gridcell"] a'
+        )
+      );
+      this.registerEvents();
+    }
+
+    private registerEvents() {
+      this.gridNode.addEventListener("keydown", (event) =>
+        this.onKeyDown(event)
+      );
+      this.gridNode.addEventListener("click", (event) => this.onClick(event));
+    }
+
+    private onKeyDown(event: KeyboardEvent) {
+      const key = event.key;
+
+      switch (key) {
+        case "ArrowRight":
+        case "ArrowDown":
+          this.moveFocus(1);
+          event.preventDefault();
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          this.moveFocus(-1);
+          event.preventDefault();
+          break;
+        case "Home":
+          this.setFocus(0);
+          event.preventDefault();
+          break;
+        case "End":
+          this.setFocus(this.cells.length - 1);
+          event.preventDefault();
+          break;
+      }
+    }
+
+    private onClick(event: MouseEvent) {
+      const target = event.target as HTMLElement;
+      const cell = target.closest(
+        'span[role="gridcell"] a'
+      ) as HTMLAnchorElement | null;
+      if (!cell) return;
+
+      const index = this.cells.indexOf(cell);
+      if (index >= 0) {
+        this.setFocus(index);
+      }
+    }
+
+    private moveFocus(offset: number) {
+      let nextIndex = this.focusedIndex + offset;
+      if (nextIndex < 0) nextIndex = 0;
+      if (nextIndex >= this.cells.length) nextIndex = this.cells.length - 1;
+      this.setFocus(nextIndex);
+    }
+
+    private setFocus(index: number) {
+      // إزالة tabindex من العنصر الحالي
+      this.cells[this.focusedIndex].tabIndex = -1;
+      // تحديث التركيز
+      this.focusedIndex = index;
+      const cell = this.cells[this.focusedIndex];
+      cell.tabIndex = 0;
+      cell.focus();
+    }
+  }
+
+  function toggleTranscript(this: HTMLElement) {
+    const expanded = this.getAttribute("aria-expanded") === "true";
+    const newState = !expanded;
+
+    // Update ARIA state
+    this.setAttribute("aria-expanded", `${newState}`);
+
+    // Update labels
+    const label = newState ? "Turn off transcripts" : "Turn on transcripts";
+    this.setAttribute("aria-label", label);
+    this.setAttribute("title", label);
+
+    // Toggle visual state
+    this.classList.toggle("is-active", newState);
+  }
+
+  // Initialization
+  window.addEventListener("DOMContentLoaded", () => {
+    const transcriptBtn = document.getElementById(
+      "transcript-btn"
+    ) as HTMLElement | null;
+
+    if (!transcriptBtn) {
+      console.warn("Transcript button (#transcript-btn) not found.");
+      return;
+    }
+
+    transcriptBtn.addEventListener("click", toggleTranscript);
+
+    const grid = document.getElementById("ex1-grid");
+
+    if (grid instanceof HTMLElement) {
+      new SimpleGrid(grid);
+    }
+  });
+</script>

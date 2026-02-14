@@ -1,0 +1,60 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .app {
+      border: 2px solid #0078d4;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .doc {
+      border: 2px dashed #4caf50;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+    }
+  </style>
+  <h1>Test: role="application" vs role="document"</h1>
+
+  <p>Instructions:</p>
+  <ol>
+    <li>Turn on NVDA.</li>
+    <li>
+      Press <strong>Insert + Space</strong> to switch between browse and focus modes
+      when needed.
+    </li>
+    <li>Press <strong>Tab</strong> to navigate through the interface below.</li>
+  </ol>
+
+  <div role="application" class="app" aria-label="Email application area">
+    <h2>Email Application (role="application")</h2>
+    <p>Inside this application area, NVDA uses focus mode by default.</p>
+    <button>New Message</button>
+    <button>Inbox</button>
+    <button>Sent</button>
+
+    <div role="document" tabindex="0" class="doc" aria-label="Email content">
+      <h3>Message Content (role="document")</h3>
+      <p>
+        Hello, this is an example message body. When focus moves here, NVDA
+        should switch to <strong>browse mode</strong>. You can now use the arrow
+        keys to read line by line.
+      </p>
+      <p>
+        Once you Tab away from this section, NVDA will return to <strong
+          >focus mode</strong
+        > for the application.
+      </p>
+    </div>
+  </div>
+</Layout>

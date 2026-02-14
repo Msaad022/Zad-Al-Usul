@@ -1,0 +1,407 @@
+<div class="combo-speed js-select-speed block mb-1.5 w-28 relative">
+  <div id="combo1-speed-label" class="combo-speed-label" hidden>Speed</div>
+  <div
+    aria-controls="listbox1"
+    aria-expanded="false"
+    aria-haspopup="listbox"
+    aria-labelledby="combo1-speed-label"
+    id="combo1-speed"
+    class="combo-speed-input bg-[#282c2e] block text-base pt-3 px-4 pb-3.5 text-left w-full"
+    role="combobox"
+    tabindex="0"
+  >
+  </div>
+  <div
+    class="combo-speed-menu bg-[#282c2e] rounded-[0_0_4px_4px] hidden max-h-72 overflow-y-auto w-full absolute left-0 top-full z-[100] [.open_&]:block"
+    role="listbox"
+    id="listbox1"
+    aria-labelledby="combo1-speed-label"
+    tabindex="-1"
+  >
+    <div
+      role="option"
+      id="combo1-speed-0"
+      class="combo-speed-option"
+      aria-selected="false"
+    >
+      2.0x
+    </div>
+    <div
+      role="option"
+      id="combo1-speed-1"
+      class="combo-speed-option"
+      aria-selected="false"
+    >
+      1.50x
+    </div>
+    <div
+      role="option"
+      id="combo1-speed-2"
+      class="combo-speed-option"
+      aria-selected="false"
+    >
+      1.25x
+    </div>
+    <div
+      role="option"
+      id="combo1-speed-3"
+      class="combo-speed-option option-current"
+      aria-selected="true"
+    >
+      1.0x
+    </div>
+    <div
+      role="option"
+      id="combo1-speed-4"
+      class="combo-speed-option"
+      aria-selected="false"
+    >
+      0.75x
+    </div>
+  </div>
+</div>
+<style>
+  .combo-speed-input {
+    border-radius: 4px;
+    font-weight: 600;
+    color: #fcfcfc;
+  }
+
+  .open .combo-speed-input {
+    border-radius: 4px 4px 0 0;
+  }
+
+  .combo-speed-input:focus {
+    border-color: #0067b8;
+    box-shadow: 0 0 4px 2px #0067b8;
+    outline: 4px solid transparent;
+  }
+
+  .open .combo-speed-menu {
+    display: block;
+  }
+
+  .combo-speed-option {
+    padding: 10px 12px 12px;
+    font-weight: 600;
+    color: #fcfcfc;
+    text-align: left;
+  }
+
+  .combo-speed-option:hover,
+  .combo-speed-option.option-current {
+    background-color: #4f595d;
+  }
+
+  .combo-speed-option[aria-selected="true"] {
+    color: #90d7f9;
+  }
+</style>
+
+<script>
+  /**
+   * Accessible Combobox (TypeScript Version)
+   * Based on W3C ARIA Combobox Example
+   */
+
+  "use strict";
+
+  enum SelectActions {
+    Close,
+    CloseSelect,
+    First,
+    Last,
+    Next,
+    Open,
+    PageDown,
+    PageUp,
+    Previous,
+    Select,
+    Type,
+  }
+
+  /** Helper: filter options that begin with a given string (case-insensitive) */
+  function filterOptions(
+    options: string[],
+    filter: string,
+    exclude: string[] = []
+  ): string[] {
+    return options.filter((option) => {
+      const matches = option.toLowerCase().startsWith(filter.toLowerCase());
+      return matches && !exclude.includes(option);
+    });
+  }
+
+  /** Helper: map keyboard key to action */
+  function getActionFromKey(
+    event: KeyboardEvent,
+    menuOpen: boolean
+  ): SelectActions | undefined {
+    const { key, altKey, ctrlKey, metaKey } = event;
+    const openKeys = ["ArrowDown", "ArrowUp", "Enter", " "];
+
+    if (!menuOpen && openKeys.includes(key)) return SelectActions.Open;
+
+    switch (key) {
+      case "Home":
+        return SelectActions.First;
+      case "End":
+        return SelectActions.Last;
+    }
+
+    if (
+      key === "Backspace" ||
+      key === "Clear" ||
+      (key.length === 1 && key !== " " && !altKey && !ctrlKey && !metaKey)
+    ) {
+      return SelectActions.Type;
+    }
+
+    if (menuOpen) {
+      switch (key) {
+        case "ArrowUp":
+          return altKey ? SelectActions.CloseSelect : SelectActions.Previous;
+        case "ArrowDown":
+          return SelectActions.Next;
+        case "PageUp":
+          return SelectActions.PageUp;
+        case "PageDown":
+          return SelectActions.PageDown;
+        case "Escape":
+          return SelectActions.Close;
+        case "Enter":
+        case " ":
+          return SelectActions.CloseSelect;
+      }
+    }
+  }
+
+  /** Helper: get index by typed letters */
+  function getIndexByLetter(
+    options: string[],
+    filter: string,
+    startIndex = 0
+  ): number {
+    const ordered = [
+      ...options.slice(startIndex),
+      ...options.slice(0, startIndex),
+    ];
+    const firstMatch = filterOptions(ordered, filter)[0];
+    const allSame = filter.split("").every((l) => l === filter[0]);
+
+    if (firstMatch) return options.indexOf(firstMatch);
+    if (allSame) {
+      const matches = filterOptions(ordered, filter[0]);
+      return matches.length ? options.indexOf(matches[0]) : -1;
+    }
+    return -1;
+  }
+
+  /** Helper: get new index after action */
+  function getUpdatedIndex(
+    current: number,
+    max: number,
+    action: SelectActions
+  ): number {
+    const pageSize = 10;
+    switch (action) {
+      case SelectActions.First:
+        return 0;
+      case SelectActions.Last:
+        return max;
+      case SelectActions.Previous:
+        // return Math.max(0, current - 1);
+        return current === 0 ? max : current - 1;
+
+      case SelectActions.Next:
+        // return Math.min(max, current + 1);
+        return current === max ? 0 : current + 1;
+
+      case SelectActions.PageUp:
+        return Math.max(0, current - pageSize);
+      case SelectActions.PageDown:
+        return Math.min(max, current + pageSize);
+      default:
+        return current;
+    }
+  }
+
+  /** Helper: scroll to ensure visibility */
+  function maintainScrollVisibility(
+    active: HTMLElement,
+    parent: HTMLElement
+  ): void {
+    const { offsetHeight, offsetTop } = active;
+    const { offsetHeight: pHeight, scrollTop } = parent;
+
+    if (offsetTop < scrollTop) {
+      parent.scrollTo(0, offsetTop);
+    } else if (offsetTop + offsetHeight > scrollTop + pHeight) {
+      parent.scrollTo(0, offsetTop - pHeight + offsetHeight);
+    }
+  }
+
+  class Select {
+    el: HTMLElement;
+    comboEl: HTMLElement;
+    listboxEl: HTMLElement;
+    options: HTMLElement[];
+    optionTexts: string[];
+    activeIndex = 0;
+    open = false;
+    searchString = "";
+    searchTimeout: number | null = null;
+    idBase: string;
+
+    constructor(el: HTMLElement) {
+      this.el = el;
+      this.comboEl = el.querySelector('[role="combobox"]') as HTMLElement;
+      this.listboxEl = el.querySelector('[role="listbox"]') as HTMLElement;
+
+      this.options = Array.from(
+        this.listboxEl.querySelectorAll<HTMLElement>('[role="option"]')
+      );
+      this.optionTexts = this.options.map(
+        (opt) => opt.textContent?.trim() ?? ""
+      );
+      this.idBase = this.comboEl.id || "combo-speed";
+      this.init();
+    }
+
+    init(): void {
+      const selectedIndex = this.options.findIndex(
+        (opt) => opt.getAttribute("aria-selected") === "true"
+      );
+      this.activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
+      this.comboEl.innerHTML = this.optionTexts[this.activeIndex];
+      this.options.forEach((opt, i) => {
+        opt.classList.toggle("option-current", i === this.activeIndex);
+      });
+
+      this.comboEl.addEventListener("click", this.onComboClick.bind(this));
+      this.comboEl.addEventListener("blur", this.onComboBlur.bind(this));
+      this.comboEl.addEventListener("keydown", this.onComboKeyDown.bind(this));
+
+      this.options.forEach((opt, index) => {
+        opt.addEventListener("click", () => this.onOptionClick(index));
+      });
+    }
+
+    private getSearchString(char: string): string {
+      if (typeof this.searchTimeout === "number")
+        window.clearTimeout(this.searchTimeout);
+
+      this.searchTimeout = window.setTimeout(
+        () => (this.searchString = ""),
+        500
+      );
+      this.searchString += char;
+      return this.searchString;
+    }
+
+    private onComboClick(): void {
+      this.updateMenuState(!this.open, false);
+    }
+
+    private onComboBlur(event: FocusEvent): void {
+      const related = event.relatedTarget as HTMLElement;
+      if (related && this.listboxEl.contains(related)) return;
+      if (this.open) {
+        this.selectOption(this.activeIndex);
+        this.updateMenuState(false, false);
+      }
+    }
+
+    private onComboKeyDown(event: KeyboardEvent): void {
+      const max = this.options.length - 1;
+      const action = getActionFromKey(event, this.open);
+      if (action === undefined) return;
+
+      switch (action) {
+        case SelectActions.First:
+        case SelectActions.Last:
+          this.updateMenuState(true);
+        // fallthrough
+        case SelectActions.Next:
+        case SelectActions.Previous:
+        case SelectActions.PageUp:
+        case SelectActions.PageDown:
+          event.preventDefault();
+          return this.onOptionChange(
+            getUpdatedIndex(this.activeIndex, max, action)
+          );
+
+        case SelectActions.CloseSelect:
+          event.preventDefault();
+          this.selectOption(this.activeIndex);
+        // fallthrough
+        case SelectActions.Close:
+          event.preventDefault();
+          return this.updateMenuState(false);
+
+        case SelectActions.Type:
+          return this.onComboType(event.key);
+
+        case SelectActions.Open:
+          event.preventDefault();
+          return this.updateMenuState(true);
+      }
+    }
+
+    private onComboType(letter: string): void {
+      this.updateMenuState(true);
+      const search = this.getSearchString(letter);
+      const index = getIndexByLetter(
+        this.optionTexts,
+        search,
+        this.activeIndex + 1
+      );
+      if (index >= 0) this.onOptionChange(index);
+    }
+
+    private onOptionChange(index: number): void {
+      this.activeIndex = index;
+      const id = `${this.idBase}-${index}`;
+      this.comboEl.setAttribute("aria-activedescendant", id);
+      this.options.forEach((opt, i) => {
+        opt.classList.toggle("option-current", i === index);
+      });
+      maintainScrollVisibility(this.options[index], this.listboxEl);
+    }
+
+    private onOptionClick(index: number): void {
+      this.onOptionChange(index);
+      this.selectOption(index);
+      this.updateMenuState(false);
+    }
+
+    private selectOption(index: number): void {
+      const selected = this.optionTexts[index];
+      this.comboEl.innerHTML = selected;
+      this.options.forEach((opt, i) => {
+        opt.setAttribute("aria-selected", String(i === index));
+      });
+    }
+
+    private updateMenuState(open: boolean, callFocus = true): void {
+      if (this.open === open) return;
+      this.open = open;
+      this.comboEl.setAttribute("aria-expanded", String(open));
+      this.el.classList.toggle("open", open);
+      const activeID = open ? `${this.idBase}-${this.activeIndex}` : "";
+      this.comboEl.setAttribute("aria-activedescendant", activeID);
+      if (open) {
+        const activeOption = this.options[this.activeIndex];
+        maintainScrollVisibility(activeOption, this.listboxEl);
+      }
+
+      callFocus && this.comboEl.focus();
+    }
+  }
+
+  /** Initialize */
+  window.addEventListener("load", () => {
+    const selects = document.querySelectorAll<HTMLElement>(".js-select-speed");
+    selects.forEach((el) => new Select(el));
+  });
+</script>

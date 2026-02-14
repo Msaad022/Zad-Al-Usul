@@ -1,0 +1,99 @@
+---
+import ImagePresentation from "../ImagePresentation.astro";
+
+const {
+  audioPosts: { id, type_que, question, answer, audio_url, words, mainEntity },
+  audioCloudUrl,
+} = Astro.props;
+---
+
+<section class="pt-10 px-4" aria-labelledby="main-title">
+  <header>
+    <ImagePresentation
+      width="130"
+      imageIndex={id}
+      aspect="aspect-1/1"
+      shadow={true}
+    />
+    <hgroup class="mt-8" id="document-title">
+      <h1 class="text-4xl sm:text-5xl" id="main-title">{question}</h1>
+      <p class="flex items-center gap-1.5 w-fit mt-4 text-base">
+        <svg
+          width="16px"
+          height="16px"
+          viewBox="0 0 16 16"
+          fill="none"
+          class="stroke-dark-m dark:stroke-light-m"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            xmlns="http://www.w3.org/2000/svg"
+            id="Vector"
+            d="M0 8H14"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+        {type_que}
+      </p>
+    </hgroup>
+  </header>
+  <p>{answer}</p>
+
+  <div role="tablist" aria-labelledby="tablist-1" class="manual">
+    <button
+      id="tab-1"
+      type="button"
+      role="tab"
+      aria-selected="true"
+      aria-controls="tabpanel-1"
+    >
+      <span class="focus">الشرح</span>
+    </button>
+    <button
+      id="tab-2"
+      type="button"
+      role="tab"
+      aria-selected="false"
+      aria-controls="tabpanel-2"
+      tabindex="-1"
+    >
+      <span class="focus">Carl Andersen</span>
+    </button>
+  </div>
+
+  <div id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1">
+    <p>
+      {mainEntity.comment}
+
+      {
+        mainEntity.description.map((item: any) => (
+          <span class="block mt-2">
+            {item.alternateName}
+            {item.ListItem.map((subItem: any) => (
+              <span class="block ml-4">{subItem.item}</span>
+            ))}
+          </span>
+        ))
+      }
+    </p>
+  </div>
+  <div
+    id="tabpanel-2"
+    role="tabpanel"
+    aria-labelledby="tab-2"
+    class="is-hidden"
+  >
+    <p>
+      <a href="https://en.wikipedia.org/wiki/Joachim_Andersen_(composer)"
+        >Carl Joachim Andersen</a
+      >
+      (29 April 1847 – 7 May 1909) was a Danish flutist, conductor and composer born
+      in Copenhagen, son of the flutist Christian Joachim Andersen. Both as a virtuoso
+      and as composer of flute music, he is considered one of the best of his time.
+      He was considered to be a tough leader and teacher and demanded as such a lot
+      from his orchestras but through that style he reached a high level.
+    </p>
+  </div>
+</section>

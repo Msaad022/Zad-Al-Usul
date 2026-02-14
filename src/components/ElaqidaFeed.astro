@@ -1,0 +1,92 @@
+---
+import PostRepository from "../db/elaqidaRepository";
+import ImagePresentation from "./ImagePresentation.astro";
+const posts = await PostRepository.getAll();
+const values = Object.values(posts);
+const setsize = values.length;
+---
+
+<section
+  class="space-y-8 pt-5 [&>article:not(:last-child)]:border-b"
+  role="feed"
+  aria-labelledby="feed-titles"
+>
+  <h1 class="text-2xl sm:text-3xl" id="feed-titles">أسئلة العقيدة الإسلامية</h1>
+  {
+    values.map(({ id, type_que, question, answer, audio_url }, x) => {
+      return (
+        <article
+          role="article"
+          class="pb-6 sm:pb-8"
+          tabindex="0"
+          aria-posinset={x + 1}
+          aria-setsize={setsize}
+          aria-labelledby={`que-name-${x + 1}`}
+          aria-describedby={`answer-name-${x + 1}`}
+        >
+          <header class="flex gap-4 flex-col-reverse sm:flex-row justify-between">
+            <hgroup class="flex flex-col-reverse gap-3 sm:justify-end">
+              {/* <h2 class="text-xl sm:text-2xl">{question} ؟</h2> */}
+              <h2 class="text-xl sm:text-2xl" id={`que-name-${x + 1}`}>
+                <span class="visually-hidden"> {type_que} &nbsp;</span>
+                <span>{question} ؟</span>
+              </h2>
+              <p
+                class="flex items-center gap-1.5 w-fit mb-2 text-sm"
+                aria-hidden="true"
+              >
+                <svg
+                  width="16px"
+                  height="16px"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  class="stroke-dark-m dark:stroke-light-m"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    xmlns="http://www.w3.org/2000/svg"
+                    id="Vector"
+                    d="M0 8H14"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                {type_que}
+              </p>
+            </hgroup>
+            <ImagePresentation width="80" imageIndex={id} aspect="aspect-1/1" />
+          </header>
+          <p class="mt-4 mb-6" id={`answer-name-${x + 1}`}>
+            {answer}
+          </p>
+          <a href={audio_url} class="flex gap-2 items-center w-fit">
+            <span class="visually-hidden">استمع الان {type_que}</span>
+            <span aria-hidden="true">أستمع الان</span>
+            <svg
+              height="28px"
+              width="28px"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              xml:space="preserve"
+              aria-hidden="true"
+              class="fill-dark-m dark:fill-light-m"
+            >
+              <g>
+                <path
+                  d="M256,0C114.608,0,0,114.608,0,256s114.608,256,256,256s256-114.608,256-256S397.392,0,256,0z
+                        M256,496C123.664,496,16,388.336,16,256S123.664,16,256,16s240,107.664,240,240S388.336,496,256,496z"
+                />
+              </g>
+
+              <g>
+                <polygon points="320,160 320,352 192,256" />
+              </g>
+            </svg>
+          </a>
+        </article>
+      );
+    })
+  }
+</section>

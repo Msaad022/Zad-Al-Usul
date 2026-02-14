@@ -1,0 +1,74 @@
+---
+let rebc = 1;
+
+function getImageIndex(
+  personNumber: number,
+  jumpSteps: number = 5,
+  totalImages: number = 15,
+): number {
+  const group = Math.floor((personNumber - 1) / jumpSteps);
+  rebc = (group % totalImages) + 1;
+  return rebc;
+}
+let rgpImage = [
+  "0",
+  "187 0 75",
+  "147 31 31",
+  "251 174 60",
+  "167 35 58",
+  "218 91 9",
+  "153 0 255",
+  "241 99 103",
+  "17 46 66",
+  "0 24 41",
+  "0 185 138",
+  "176 35 95",
+  "97 152 255",
+  "41 126 166",
+  "0 34 51",
+  "102 0 255",
+];
+
+interface Props {
+  width: string;
+  aspect: string;
+  imageIndex: number;
+  shadow?: boolean;
+}
+
+const { imageIndex, aspect, width, shadow } = Astro.props;
+
+let _src = `/haikei-svg/${getImageIndex(Number(imageIndex))}-haikei.svg`;
+let rgbColor = rgpImage[rebc];
+---
+
+<span
+  aria-hidden="true"
+  data-index={`${imageIndex}`}
+  class="relative w-fit h-fit block shrink-0 before:content-[attr(data-index)] before:text-3xl before:font-medium before:absolute before:top-1/2 before:left-1/2 before:-translate-1/2"
+>
+  <img
+    width={`${width}`}
+    height="80"
+    loading="lazy"
+    aria-hidden="true"
+    alt="image presentation"
+    src={_src}
+    class={`block rounded-full ${aspect} object-cover`}
+  />
+  {
+    shadow && (
+      <span
+        class={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full rounded-full -z-1`}
+        style={{
+          boxShadow: `
+          0px 0px 0px 30px rgb(${rgbColor} / 15%), 
+          0px 0px 0px 60px rgb(${rgbColor} / 15%), 
+          0px 0px 0px 90px rgb(${rgbColor} / 15%), 
+          0px 0px 0px 120px rgb(${rgbColor} / 20%)
+        `,
+        }}
+      />
+    )
+  }
+</span>
