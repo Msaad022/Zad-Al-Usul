@@ -1,9 +1,9 @@
 ---
-import PostRepository from "../db/elaqidaRepository";
 import ImagePresentation from "./ImagePresentation.astro";
-const posts = await PostRepository.getAll();
-const values = Object.values(posts);
-const setsize = values.length;
+import { db, Questions } from "astro:db";
+const questions = await db.select().from(Questions);
+const setsize = questions.length;
+console.log(questions);
 ---
 
 <section
@@ -13,7 +13,7 @@ const setsize = values.length;
 >
   <h1 class="text-2xl sm:text-3xl" id="feed-titles">أسئلة العقيدة الإسلامية</h1>
   {
-    values.map(({ id, type_que, question, answer, audio_url }, x) => {
+    questions.map(({ id, type_que, question, answer, audio_url }, x) => {
       return (
         <article
           role="article"
@@ -79,7 +79,6 @@ const setsize = values.length;
                         M256,496C123.664,496,16,388.336,16,256S123.664,16,256,16s240,107.664,240,240S388.336,496,256,496z"
                 />
               </g>
-
               <g>
                 <polygon points="320,160 320,352 192,256" />
               </g>
