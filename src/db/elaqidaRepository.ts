@@ -14,7 +14,7 @@ export type mainEntity = {
 };
 
 export type Post = {
-  id: string;
+  id: number;
   type_que: string;
   question: string;
   answer: string;
@@ -34,7 +34,7 @@ class PostRepository {
   private static async fetchFromAPI(): Promise<Record<string, Post>> {
     return {
       "1": {
-        id: "1",
+        id: 1,
         type_que: "السؤال الاول",
         question: "من ربك",
         answer: "ربى الله وهو رب العالمين.",
@@ -134,7 +134,7 @@ class PostRepository {
         },
       },
       "2": {
-        id: "2",
+        id: 2,
         type_que: "السؤال الثاني",
         question: "ما دينك",
         answer: "دينى الاسلام.",
@@ -215,7 +215,7 @@ class PostRepository {
         },
       },
       "3": {
-        id: "3",
+        id: 3,
         type_que: "السؤال الثالث",
         question: "من نبيك",
         answer: "نبيى محمد بن عبد الله بن عبد المطلب صلى الله عليه وسلم",
@@ -347,7 +347,7 @@ class PostRepository {
         },
       },
       "4": {
-        id: "4",
+        id: 4,
         type_que: "السؤال الرابع",
         question: "ما كتابك",
         answer: "كتابى القرآن الكريم.",
@@ -437,7 +437,7 @@ class PostRepository {
         },
       },
       "5": {
-        id: "5",
+        id: 5,
         type_que: "السؤال الخامس",
         question: "ما هو القرآن",
         answer: "هو كلام الله تعالى.",
@@ -529,7 +529,7 @@ class PostRepository {
         },
       },
       "6": {
-        id: "6",
+        id: 6,
         type_que: "السؤال السادس",
         question: "لماذا نحفظ القرآن",
         answer:
@@ -666,7 +666,7 @@ class PostRepository {
         },
       },
       "7": {
-        id: "7",
+        id: 7,
         type_que: "السؤال السابع",
         question: "من الذى خلقنا",
         answer:
@@ -802,7 +802,7 @@ class PostRepository {
         },
       },
       "8": {
-        id: "8",
+        id: 8,
         type_que: "السؤال الثامن",
         question: "لماذا خلقنا الله",
         answer: "الله خلقنا لنعبده ولا نشرك به أحدا.",
@@ -912,7 +912,7 @@ class PostRepository {
         },
       },
       "9": {
-        id: "9",
+        id: 9,
         type_que: "السؤال التاسع",
         question: "ما هى كلمة التوحيد",
         answer: "لا اله إلا الله.",
@@ -1008,7 +1008,7 @@ class PostRepository {
         },
       },
       "10": {
-        id: "10",
+        id: 10,
         type_que: "السؤال العاشر",
         question: "ما معناها",
         answer: "لا معبود بحق إلا الله .",
