@@ -3,7 +3,6 @@ import ImagePresentation from "./ImagePresentation.astro";
 import { db, Questions } from "astro:db";
 const questions = await db.select().from(Questions);
 const setsize = questions.length;
-console.log(questions);
 ---
 
 <section

@@ -1,13 +1,21 @@
 import { defineAction, ActionError } from "astro:actions";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { hashPassword, VerifyUserExist } from "../utils";
 
 const loginSchema = z.object({
   email: z
-    .string()
+    .string({
+      required_error: "يرجى إدخال البريد الإلكتروني",
+      invalid_type_error: "البريد الإلكتروني يجب أن يكون نصًا",
+    })
     .min(12, "البريد الإلكتروني يجب أن يكون 12 حرف على الأقل")
     .email("البريد الإلكتروني غير صالح"),
-  password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
+  password: z
+    .string({
+      required_error: "يرجى إدخال كلمة المرور",
+      invalid_type_error: "كلمة المرور يجب أن تكون نصًا",
+    })
+    .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
 });
 
 export const auth = {
@@ -15,12 +23,20 @@ export const auth = {
     accept: "form",
     input: loginSchema,
     handler: async ({ email, password }, ctx) => {
+      console.log("Login action called with:", { email, password });
       let str = `${hashPassword(email)}:${hashPassword(password)}`;
       if (!VerifyUserExist(str)) {
-        throw new ActionError({
-          code: "BAD_REQUEST",
-          message: "البريد الإلكتروني أو كلمة المرور غير صالحة.",
-        });
+        // throw new ActionError({
+        //   code: "BAD_REQUEST",
+        //   message: "البريد الإلكتروني أو كلمة المرور غير صالحة.",
+        // });
+        throw new ZodError([
+          {
+            code: "custom",
+            path: ["username"],
+            message: "This username is already taken",
+          },
+        ]);
       }
       ctx.cookies.set("rolecheck", str, {
         path: "/role-check",
