@@ -9,25 +9,9 @@ const result = Astro.getActionResult(actions.auth.login);
 if (result && !result.error) {
   return Astro.redirect("/role-check/upload", 303);
 }
-// طريقه عرض الاخطاء مش افضل حاجه لانها بتقسم نوع الخطاء
 const inputErrors = isInputError(result?.error) ? result.error.fields : {};
-console.log(result);
 ---
 
-<!--
- 
-<p>
-  <label for="email">Email address:</label>
-  <input
-    type="email"
-    name="email"
-    id="email"
-    aria-invalid="true"
-    aria-errormessage="err1" />
-  <span id="err1" class="errormessage">Error: Enter a valid email address</span>
-</p>
-
--->
 <Layout>
   <Fragment slot="head-meta">
     <title>زاد الأصول | صفحة تسجيل الدخول</title>
@@ -36,6 +20,9 @@ console.log(result);
   <form
     method="POST"
     action={actions.auth.login}
+    aria-describedby={result?.error?.type === "AstroActionError"
+      ? "form-error"
+      : undefined}
     class="relative max-w-2xl mt-20"
   >
     <fieldset>
@@ -53,7 +40,6 @@ console.log(result);
           name="email"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="example@example.com"
-          aria-describedby="error-email error-inputs"
           minlength="12"
           required
           aria-invalid={inputErrors.email ? "true" : "false"}
@@ -61,10 +47,8 @@ console.log(result);
         />
         {
           inputErrors.email && (
-            <p id="error-email" role="alert">
-              {inputErrors.email.map((err) => {
-                return <span class="block mt-1.5">{err}</span>;
-              })}
+            <p id="email-error" class="whitespace-pre-line">
+              {inputErrors.email.join("\n")}
             </p>
           )
         }
@@ -81,22 +65,23 @@ console.log(result);
           name="password"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="•••••••••"
-          aria-describedby="error-password error-inputs"
           minlength="6"
           required
+          aria-invalid={inputErrors.password ? "true" : "false"}
+          aria-errormessage="password-error"
         />
         {
           inputErrors.password && (
-            <p id="error-password" role="alert">
-              {inputErrors.password.map((err) => {
-                return <span class="block mt-1.5">{err}</span>;
-              })}
+            <p id="password-error" class="whitespace-pre-line">
+              {inputErrors.password.join("\n")}
             </p>
           )
-        }{
-          result?.error?.type == "AstroActionError" && (
-            <p id="error-inputs" role="alert">
-              <span class="block mt-1.5">{result?.error?.message}</span>
+        }
+        {
+          result?.error?.type === "AstroActionError" && (
+            <p id="form-error" role="alert" class="whitespace-pre-line">
+              {/* {result.error.message} */}
+              not found result error
             </p>
           )
         }

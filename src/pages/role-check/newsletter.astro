@@ -1,0 +1,27 @@
+<form>
+  <label for="email">E-mail</label>
+  <input id="email" type="email" name="email" value="rws@tes.com" />
+  <label>
+    <input type="checkbox" name="terms" value="true" />
+    I agree to the terms of service
+  </label>
+  <button>Sign up</button>
+</form>
+
+<script>
+  import { actions, isInputError } from "astro:actions";
+
+  const form = document.querySelector("form");
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const { data, error } = await actions.newsletter.newsletterAction(formData);
+    if (isInputError(error)) {
+      // Handle input errors.
+      if (error.fields.email) {
+        console.log(error.fields.email.join(", "));
+      }
+    }
+    console.log(isInputError(error), error);
+  });
+</script>

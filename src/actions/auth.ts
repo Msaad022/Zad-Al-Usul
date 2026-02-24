@@ -1,5 +1,5 @@
 import { defineAction, ActionError } from "astro:actions";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { hashPassword, VerifyUserExist } from "../utils";
 
 const loginSchema = z.object({
@@ -23,20 +23,12 @@ export const auth = {
     accept: "form",
     input: loginSchema,
     handler: async ({ email, password }, ctx) => {
-      console.log("Login action called with:", { email, password });
       let str = `${hashPassword(email)}:${hashPassword(password)}`;
       if (!VerifyUserExist(str)) {
-        // throw new ActionError({
-        //   code: "BAD_REQUEST",
-        //   message: "البريد الإلكتروني أو كلمة المرور غير صالحة.",
-        // });
-        throw new ZodError([
-          {
-            code: "custom",
-            path: ["username"],
-            message: "This username is already taken",
-          },
-        ]);
+        throw new ActionError({
+          code: "BAD_REQUEST",
+          message: "البريد الإلكتروني أو كلمة المرور غير صالحة.",
+        });
       }
       ctx.cookies.set("rolecheck", str, {
         path: "/role-check",
