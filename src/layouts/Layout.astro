@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import Toast from "../components/Toast.astro";
+import FormSubmitLoading from "../components/FormSubmitLoading.astro";
 ---
 
 <!doctype html>
@@ -44,5 +46,7 @@ import "../styles/global.css";
     <main class="w-full lg:max-w-[960px] px-3 mx-auto">
       <slot />
     </main>
+    <Toast />
+    <FormSubmitLoading />
   </body>
 </html>

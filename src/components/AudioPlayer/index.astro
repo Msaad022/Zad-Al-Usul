@@ -1,99 +1,835 @@
 ---
 import ImagePresentation from "../ImagePresentation.astro";
+import SpeedControl from "./speed-control.astro";
+import VolumeControl from "./volume-control.astro";
+import TranscriptControls from "./transcript-controls.astro";
 
-const {
-  audioPosts: { id, type_que, question, answer, audio_url, words, mainEntity },
-  audioCloudUrl,
-} = Astro.props;
+interface WordItem {
+  text: string;
+  start: number;
+  end: number;
+}
+
+interface MainEntityItem {
+  alternateName?: string;
+  ListItem?: Array<{ item: string }>;
+}
+
+interface Props {
+  audioPosts: {
+    id: number;
+    type_que: string;
+    question: string;
+    answer: string;
+    words: WordItem[];
+    description?: string;
+    mainEntity?: {
+      comment?: string;
+      description?: MainEntityItem[];
+    };
+  };
+  audioCloudUrl: string;
+}
+
+const { audioPosts, audioCloudUrl } = Astro.props;
+const { id, type_que, question, answer, words, description, mainEntity } =
+  audioPosts;
+const playerId = `player-${id}`;
+const audioElId = `audio-${playerId}`;
+
+const hasMainEntity = mainEntity && typeof mainEntity === "object";
+const aboutContent = hasMainEntity ? mainEntity : null;
+
+const hasValidAudioUrl =
+  typeof audioCloudUrl === "string" && audioCloudUrl.trim().length > 0;
+const isCrossOriginUrl =
+  hasValidAudioUrl &&
+  (audioCloudUrl.startsWith("http://") || audioCloudUrl.startsWith("https://"));
 ---
 
-<section class="pt-10 px-4" aria-labelledby="main-title">
-  <header>
-    <ImagePresentation
-      width="130"
-      imageIndex={id}
-      aspect="aspect-1/1"
-      shadow={true}
-    />
-    <hgroup class="mt-8" id="document-title">
-      <h1 class="text-4xl sm:text-5xl" id="main-title">{question}</h1>
-      <p class="flex items-center gap-1.5 w-fit mt-4 text-base">
-        <svg
-          width="16px"
-          height="16px"
-          viewBox="0 0 16 16"
-          fill="none"
-          class="stroke-dark-m dark:stroke-light-m"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            xmlns="http://www.w3.org/2000/svg"
-            id="Vector"
-            d="M0 8H14"
-            stroke-width="1"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-        </svg>
-        {type_que}
-      </p>
-    </hgroup>
-  </header>
-  <p>{answer}</p>
-
-  <div role="tablist" aria-labelledby="tablist-1" class="manual">
-    <button
-      id="tab-1"
-      type="button"
-      role="tab"
-      aria-selected="true"
-      aria-controls="tabpanel-1"
-    >
-      <span class="focus">الشرح</span>
-    </button>
-    <button
-      id="tab-2"
-      type="button"
-      role="tab"
-      aria-selected="false"
-      aria-controls="tabpanel-2"
-      tabindex="-1"
-    >
-      <span class="focus">Carl Andersen</span>
-    </button>
+<section
+  class="audio-player-section"
+  aria-labelledby="main-title"
+  data-player-id={playerId}
+>
+  <div class="hero">
+    <div class="hero-accent" aria-hidden="true"></div>
+    <div class="hero-content">
+      <div class="hero-art">
+        <ImagePresentation
+          width="230"
+          imageIndex={id}
+          aspect="aspect-1/1"
+          shadow={true}
+        />
+      </div>
+      <header class="hero-meta">
+        <span class="hero-type">{type_que}</span>
+        <h1 class="hero-title" id="main-title">{question}</h1>
+        <p class="hero-answer" id="document-title">{answer}</p>
+      </header>
+    </div>
   </div>
 
-  <div id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1">
-    <p>
-      {mainEntity.comment}
-
-      {
-        mainEntity.description.map((item: any) => (
-          <span class="block mt-2">
-            {item.alternateName}
-            {item.ListItem.map((subItem: any) => (
-              <span class="block ml-4">{subItem.item}</span>
-            ))}
-          </span>
-        ))
-      }
-    </p>
-  </div>
-  <div
-    id="tabpanel-2"
-    role="tabpanel"
-    aria-labelledby="tab-2"
-    class="is-hidden"
-  >
-    <p>
-      <a href="https://en.wikipedia.org/wiki/Joachim_Andersen_(composer)"
-        >Carl Joachim Andersen</a
+  <div class="content-wrap">
+    <div role="tablist" aria-label="محتوى الحلقة" class="manual tabs">
+      <button
+        id={`tab-1-${playerId}`}
+        type="button"
+        role="tab"
+        aria-selected="true"
+        aria-controls={`tabpanel-1-${playerId}`}
+        data-tab-index="0"
       >
-      (29 April 1847 – 7 May 1909) was a Danish flutist, conductor and composer born
-      in Copenhagen, son of the flutist Christian Joachim Andersen. Both as a virtuoso
-      and as composer of flute music, he is considered one of the best of his time.
-      He was considered to be a tough leader and teacher and demanded as such a lot
-      from his orchestras but through that style he reached a high level.
-    </p>
+        <span class="focus">عن هذا السؤال</span>
+      </button>
+      <button
+        id={`tab-2-${playerId}`}
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls={`tabpanel-2-${playerId}`}
+        tabindex="-1"
+        data-tab-index="1"
+      >
+        <span class="focus">النص المتزامن</span>
+      </button>
+    </div>
+
+    <div
+      id={`tabpanel-1-${playerId}`}
+      role="tabpanel"
+      aria-labelledby={`tab-1-${playerId}`}
+    >
+      <div class="description-block">
+        {
+          hasMainEntity && aboutContent ? (
+            <p>
+              {aboutContent.comment ?? ""}
+              {aboutContent.description?.map((item: MainEntityItem) => (
+                <span class="block mt-2">
+                  {item.alternateName ?? ""}
+                  {item.ListItem?.map((subItem: { item: string }) => (
+                    <span class="block ml-4">{subItem.item}</span>
+                  ))}
+                </span>
+              ))}
+            </p>
+          ) : (
+            <p>{description ?? answer ?? ""}</p>
+          )
+        }
+      </div>
+
+      <div class="audio-main">
+        <audio
+          id={audioElId}
+          src={hasValidAudioUrl ? audioCloudUrl.trim() : undefined}
+          preload="metadata"
+          crossorigin={isCrossOriginUrl ? "anonymous" : undefined}></audio>
+
+        <div class="progress-section">
+          <span id={`current-time-${playerId}`} class="time-current">00:00</span
+          >
+          <input
+            type="range"
+            id={`progress-${playerId}`}
+            value="0"
+            step="0.01"
+            class="progress-range"
+            aria-label="شريط التقدّم"
+          />
+          <span id={`total-time-${playerId}`} class="time-total">00:00</span>
+        </div>
+
+        <div class="controls-row">
+          <button
+            type="button"
+            id={`prev-${playerId}`}
+            class="control-btn"
+            aria-label="السابق">&#171;</button
+          >
+          <button
+            type="button"
+            id={`back15-${playerId}`}
+            class="control-btn control-btn-15"
+            aria-label="تراجع ١٥ ثانية"
+          >
+            <span aria-hidden="true">15</span>
+            <svg
+              class="control-icon-back"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              ><path
+                fill="currentColor"
+                d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"></path></svg
+            >
+          </button>
+          <button
+            type="button"
+            id={`play-pause-${playerId}`}
+            class="play-btn"
+            aria-label="تشغيل / إيقاف">تشغيل</button
+          >
+          <button
+            type="button"
+            id={`fwd15-${playerId}`}
+            class="control-btn control-btn-15"
+            aria-label="تقديم ١٥ ثانية"
+          >
+            <span aria-hidden="true">15</span>
+            <svg class="control-icon-fwd" viewBox="0 0 24 24" aria-hidden="true"
+              ><path
+                fill="currentColor"
+                d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path></svg
+            >
+          </button>
+          <button
+            type="button"
+            id={`next-${playerId}`}
+            class="control-btn"
+            aria-label="التالي">&#187;</button
+          >
+
+          <div class="controls-extras">
+            <SpeedControl playerId={playerId} audioId={audioElId} />
+            <VolumeControl playerId={playerId} audioId={audioElId} />
+            <TranscriptControls playerId={playerId} embedInPlayer={true} />
+          </div>
+
+          <button
+            type="button"
+            id={`repeat-${playerId}`}
+            class="repeat-btn"
+            aria-label="تكرار">تكرار</button
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      id={`tabpanel-2-${playerId}`}
+      role="tabpanel"
+      aria-labelledby={`tab-2-${playerId}`}
+      class="is-hidden"
+      hidden
+    >
+      <section class="transcript-section">
+        <div class="transcript-header">
+          <h2>النص المتزامن مع الصوت</h2>
+          <p class="transcript-hint">
+            اضغط على أي كلمة للانتقال مباشرة إلى موضعها في الملف الصوتي.
+          </p>
+        </div>
+        <div
+          id={`transcript-container-${playerId}`}
+          class="transcript-container"
+        >
+          {
+            words.map(
+              (
+                item: { text: string; start: number; end: number },
+                index: number,
+              ) => (
+                <>
+                  <span
+                    class="word"
+                    data-index={index}
+                    data-start={item.start}
+                    data-end={item.end}
+                  >
+                    {item.text}
+                  </span>{" "}
+                </>
+              ),
+            )
+          }
+        </div>
+      </section>
+    </div>
   </div>
 </section>
+
+<style>
+  .audio-player-section {
+    --spotify-bg: #121212;
+    --spotify-surface: #181818;
+    --spotify-card: #282828;
+    --spotify-green: #1db954;
+    --spotify-green-hover: #1ed760;
+    --spotify-text: #ffffff;
+    --spotify-text-muted: #b3b3b3;
+    --spotify-text-sub: #6a6a6a;
+    --player-accent: #facc15;
+    min-height: 100vh;
+    background: var(--spotify-bg);
+    color: var(--spotify-text);
+  }
+
+  .hero {
+    position: relative;
+    padding: 2rem 1.5rem 2.5rem;
+    min-height: 280px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .hero-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 120px;
+    background: linear-gradient(
+      90deg,
+      var(--player-accent, #facc15) 0%,
+      rgba(250, 204, 21, 0.4) 60%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero-art {
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  }
+
+  .hero-art :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    vertical-align: middle;
+    border-radius: 8px;
+  }
+
+  .hero-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hero-type {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--spotify-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 0.5rem;
+    word-break: break-word;
+  }
+
+  .hero-answer {
+    font-size: 0.95rem;
+    color: var(--spotify-text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .content-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem 3rem;
+  }
+
+  /* Tabs: minimal underline style */
+  .tabs.manual {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tabs.manual :global([role="tab"]) {
+    background: none;
+    border: none;
+    color: var(--spotify-text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.75rem 0.5rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .tabs.manual :global([role="tab"]:hover) {
+    color: var(--spotify-text);
+  }
+
+  .tabs.manual :global([role="tab"][aria-selected="true"]) {
+    color: var(--spotify-text);
+    border-bottom-color: var(--spotify-green);
+  }
+
+  .description-block {
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--spotify-text-muted);
+  }
+
+  .description-block p {
+    margin: 0;
+  }
+
+  .audio-main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: var(--spotify-card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Progress: time | -------- bar -------- | time */
+  .progress-section {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .time-current,
+  .time-total {
+    font-size: 0.8rem;
+    color: var(--spotify-text-sub);
+    min-width: 2.5rem;
+    direction: ltr;
+    text-align: center;
+  }
+
+  .progress-range {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    outline: none;
+  }
+
+  .progress-section .progress-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--spotify-text);
+    cursor: pointer;
+    box-shadow: 0 0 0 2px var(--spotify-card);
+  }
+
+  .progress-section .progress-range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--spotify-text);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 0 2px var(--spotify-card);
+  }
+
+  .progress-section .progress-range:hover::-webkit-slider-thumb {
+    transform: scale(1.15);
+  }
+
+  .progress-section .progress-range:hover::-moz-range-thumb {
+    transform: scale(1.15);
+  }
+
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .control-btn {
+    background: transparent;
+    color: var(--spotify-text-muted);
+    border: none;
+    padding: 0.5rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+
+  .control-btn:hover {
+    color: var(--spotify-text);
+  }
+
+  .control-btn-15 {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+  }
+
+  .control-btn-15 .control-icon-back,
+  .control-btn-15 .control-icon-fwd {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .play-btn {
+    background: var(--spotify-green);
+    color: #000;
+    border: none;
+    padding: 0.85rem 1.5rem;
+    border-radius: 50%;
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .play-btn:hover {
+    background: var(--spotify-green-hover);
+    transform: scale(1.05);
+  }
+
+  .play-btn:active {
+    transform: scale(0.98);
+  }
+
+  .controls-extras {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .repeat-btn {
+    background: transparent;
+    color: var(--spotify-text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition:
+      color 0.2s,
+      border-color 0.2s,
+      background 0.2s;
+  }
+
+  .repeat-btn:hover {
+    color: var(--spotify-text);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .repeat-btn:focus-visible {
+    outline: 2px solid var(--spotify-green);
+    outline-offset: 2px;
+  }
+
+  /* Transcript */
+  .transcript-section {
+    background: var(--spotify-card);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .transcript-header h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .transcript-hint {
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    color: var(--spotify-text-muted);
+  }
+
+  .transcript-container {
+    font-size: 1rem;
+    line-height: 1.9;
+    text-align: justify;
+    padding: 0.5rem 0;
+    max-height: 240px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--spotify-text-sub) transparent;
+  }
+
+  .transcript-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .transcript-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .transcript-container::-webkit-scrollbar-thumb {
+    background: var(--spotify-text-sub);
+    border-radius: 3px;
+  }
+
+  .transcript-container :global(.word) {
+    transition:
+      color 0.15s,
+      background 0.15s;
+    margin-inline: 0.1rem;
+    padding: 0.1rem 0.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .transcript-container :global(.word:hover) {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .transcript-container :global(.word.highlighted) {
+    color: var(--spotify-green);
+    background: rgba(29, 185, 84, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-bottom: 1.5rem;
+      min-height: auto;
+    }
+
+    .hero-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+
+    .hero-art {
+      width: 180px;
+    }
+
+    .controls-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .play-btn {
+      width: 100%;
+      min-width: unset;
+    }
+
+    .transcript-container {
+      max-height: 200px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-art {
+      width: 140px;
+    }
+
+    .progress-section {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .time-current,
+    .time-total {
+      text-align: start;
+    }
+  }
+</style>
+
+<script define:vars={{ playerId }}>
+  document.addEventListener("DOMContentLoaded", () => {
+    const section = document.querySelector(`[data-player-id="${playerId}"]`);
+    if (!section) return;
+
+    const audio = document.getElementById(`audio-${playerId}`);
+    const playPauseBtn = document.getElementById(`play-pause-${playerId}`);
+    const repeatBtn = document.getElementById(`repeat-${playerId}`);
+    const progressBar = document.getElementById(`progress-${playerId}`);
+    const currentTimeSpan = document.getElementById(`current-time-${playerId}`);
+    const totalTimeSpan = document.getElementById(`total-time-${playerId}`);
+    const transcriptContainer = document.getElementById(
+      `transcript-container-${playerId}`,
+    );
+    const prevBtn = document.getElementById(`prev-${playerId}`);
+    const nextBtn = document.getElementById(`next-${playerId}`);
+    const back15Btn = document.getElementById(`back15-${playerId}`);
+    const fwd15Btn = document.getElementById(`fwd15-${playerId}`);
+    const transcriptBtn = document.getElementById(`transcript-btn-${playerId}`);
+    const tab1 = document.getElementById(`tab-1-${playerId}`);
+    const tab2 = document.getElementById(`tab-2-${playerId}`);
+    const panel1 = document.getElementById(`tabpanel-1-${playerId}`);
+    const panel2 = document.getElementById(`tabpanel-2-${playerId}`);
+
+    if (!audio || !playPauseBtn || !progressBar || !transcriptContainer) return;
+
+    let isPlaying = false;
+    let isRepeating = false;
+
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    }
+
+    function switchTab(index) {
+      if (index === 0 && tab1 && tab2 && panel1 && panel2) {
+        tab1.setAttribute("aria-selected", "true");
+        tab2.setAttribute("aria-selected", "false");
+        tab2.setAttribute("tabindex", "-1");
+        panel1.hidden = false;
+        panel2.hidden = true;
+      } else if (index === 1 && tab1 && tab2 && panel1 && panel2) {
+        tab1.setAttribute("aria-selected", "false");
+        tab1.setAttribute("tabindex", "-1");
+        tab2.setAttribute("aria-selected", "true");
+        panel1.hidden = true;
+        panel2.hidden = false;
+      }
+    }
+
+    if (transcriptBtn && tab2) {
+      transcriptBtn.addEventListener("click", () => {
+        const expanded = transcriptBtn.getAttribute("aria-expanded") === "true";
+        transcriptBtn.setAttribute("aria-expanded", String(!expanded));
+        transcriptBtn.classList.toggle("is-active", !expanded);
+        switchTab(expanded ? 0 : 1);
+      });
+    }
+
+    if (tab1 && tab2 && panel1 && panel2) {
+      [tab1, tab2].forEach((tab, i) => {
+        tab.addEventListener("click", () => switchTab(i));
+        tab.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            switchTab(i);
+          }
+        });
+      });
+    }
+
+    const wordSpans = transcriptContainer.querySelectorAll(".word");
+    wordSpans.forEach((span) => {
+      span.addEventListener("click", () => {
+        const start = span.dataset.start;
+        if (start != null) {
+          audio.currentTime = Number(start) / 1000;
+          if (!isPlaying) {
+            audio.play();
+            isPlaying = true;
+            playPauseBtn.textContent = "إيقاف";
+          }
+        }
+      });
+    });
+
+    playPauseBtn.addEventListener("click", () => {
+      if (isPlaying) {
+        audio.pause();
+        playPauseBtn.textContent = "تشغيل";
+      } else {
+        audio.play();
+        playPauseBtn.textContent = "إيقاف";
+      }
+      isPlaying = !isPlaying;
+    });
+
+    if (prevBtn)
+      prevBtn.addEventListener("click", () => {
+        audio.currentTime = 0;
+      });
+    if (nextBtn)
+      nextBtn.addEventListener("click", () => {
+        audio.currentTime = audio.duration || 0;
+      });
+    if (back15Btn)
+      back15Btn.addEventListener("click", () => {
+        audio.currentTime = Math.max(0, audio.currentTime - 15);
+      });
+    if (fwd15Btn)
+      fwd15Btn.addEventListener("click", () => {
+        audio.currentTime = Math.min(
+          audio.duration || 0,
+          audio.currentTime + 15,
+        );
+      });
+
+    if (repeatBtn) {
+      repeatBtn.addEventListener("click", () => {
+        isRepeating = !isRepeating;
+        repeatBtn.textContent = isRepeating ? "إلغاء التكرار" : "تكرار";
+      });
+    }
+
+    audio.addEventListener("ended", () => {
+      if (isRepeating) {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        isPlaying = false;
+        playPauseBtn.textContent = "تشغيل";
+      }
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      progressBar.max = audio.duration;
+      if (totalTimeSpan) totalTimeSpan.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      progressBar.value = audio.currentTime;
+      if (currentTimeSpan)
+        currentTimeSpan.textContent = formatTime(audio.currentTime);
+
+      const currentTimeInMs = audio.currentTime * 1000;
+      const spans = transcriptContainer.querySelectorAll(".word");
+      let found = false;
+      spans.forEach((span) => {
+        const start = Number(span.dataset.start);
+        const end = Number(span.dataset.end);
+        if (currentTimeInMs >= start && currentTimeInMs < end) {
+          if (!span.classList.contains("highlighted")) {
+            spans.forEach((s) => s.classList.remove("highlighted"));
+            span.classList.add("highlighted");
+          }
+          found = true;
+        }
+      });
+      if (!found) spans.forEach((s) => s.classList.remove("highlighted"));
+    });
+
+    progressBar.addEventListener("input", () => {
+      audio.currentTime = Number(progressBar.value);
+    });
+  });
+</script>

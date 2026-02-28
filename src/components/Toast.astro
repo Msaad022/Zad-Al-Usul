@@ -1,0 +1,121 @@
+---
+/**
+ * Toast notification component.
+ * Renders a container and script. Use data-toast-initial on any element to show a toast on load (e.g. error).
+ * URL params: ?toast=upload_success | update_success for success toasts after redirect.
+ */
+---
+
+<div
+  id="toast-container"
+  class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-[9999] flex flex-col gap-2 pointer-events-none"
+  role="region"
+  aria-label="إشعارات"
+>
+</div>
+
+<script is:inline>
+  (function () {
+    const TOAST_AUTO_DISMISS_MS = 4500;
+
+    function getContainer() {
+      let el = document.getElementById("toast-container");
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "toast-container";
+        el.className =
+          "fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-[9999] flex flex-col gap-2 pointer-events-none";
+        el.setAttribute("role", "region");
+        el.setAttribute("aria-label", "إشعارات");
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+
+    function showToast(message, type) {
+      type = type || "success";
+      const container = getContainer();
+      const isError = type === "error";
+      const toast = document.createElement("div");
+      toast.className =
+        "pointer-events-auto rounded-lg border px-4 py-3 shadow-lg " +
+        (isError
+          ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200"
+          : "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200");
+      toast.setAttribute("role", isError ? "alert" : "status");
+      toast.setAttribute("aria-live", "polite");
+      toast.setAttribute("aria-atomic", "true");
+
+      const wrap = document.createElement("div");
+      wrap.className = "flex items-start justify-between gap-2";
+      const text = document.createElement("p");
+      text.className = "text-sm font-medium";
+      text.textContent = message;
+      wrap.appendChild(text);
+
+      const closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className =
+        "shrink-0 rounded p-1 opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-1 " +
+        (isError ? "focus:ring-red-500" : "focus:ring-emerald-500");
+      closeBtn.setAttribute("aria-label", "إغلاق");
+      closeBtn.innerHTML =
+        '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>';
+      closeBtn.addEventListener("click", () => removeToast(toast));
+      wrap.appendChild(closeBtn);
+      toast.appendChild(wrap);
+
+      container.appendChild(toast);
+
+      const t = setTimeout(function () {
+        removeToast(toast);
+      }, TOAST_AUTO_DISMISS_MS);
+
+      toast._dismissTimer = t;
+    }
+
+    function removeToast(toastEl) {
+      if (toastEl._dismissTimer) clearTimeout(toastEl._dismissTimer);
+      toastEl.remove();
+    }
+
+    function initFromPage() {
+      const el = document.querySelector("[data-toast-initial]");
+      if (el) {
+        var msg = el.getAttribute("data-toast-message");
+        if (msg) {
+          var type =
+            (el.getAttribute("data-toast-type") || "error") === "error"
+              ? "error"
+              : "success";
+          showToast(msg, type);
+          el.removeAttribute("data-toast-initial");
+          el.removeAttribute("data-toast-message");
+          el.removeAttribute("data-toast-type");
+        }
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const toast = params.get("toast");
+      if (toast === "upload_success") {
+        showToast("تم رفع السؤال بنجاح", "success");
+        const url = new URL(window.location.href);
+        url.searchParams.delete("toast");
+        window.history.replaceState({}, "", url.toString());
+      } else if (toast === "update_success") {
+        showToast("تم تعديل السؤال بنجاح", "success");
+        const url = new URL(window.location.href);
+        url.searchParams.delete("toast");
+        window.history.replaceState({}, "", url.toString());
+      }
+    }
+
+    window.showToast = showToast;
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initFromPage);
+    } else {
+      initFromPage();
+    }
+  })();
+</script>

@@ -1,8 +1,22 @@
-<div class="slider-volume relative w-6 h-6">
-  <div id="id-temp-label" hidden>Volume</div>
+---
+interface Props {
+  playerId?: string;
+  audioId?: string;
+}
+const { playerId = "default", audioId } = Astro.props;
+const labelId = `volume-label-${playerId}`;
+const btnId = `btnVolumeMute-${playerId}`;
+const sliderId = `volume-slider-${playerId}`;
+---
+
+<div
+  class="slider-volume relative w-6 h-6"
+  data-audio-id={audioId ?? undefined}
+>
+  <div id={labelId} hidden>Volume</div>
   <button
     role="button"
-    id="btnVolumeMute"
+    id={btnId}
     aria-pressed="false"
     class="w-6 h-6"
     aria-label="Mute"
@@ -32,14 +46,14 @@
   >
     <g
       role="slider"
-      id="id-temp-slider"
+      id={sliderId}
       aria-orientation="vertical"
       tabindex="0"
       aria-valuemin="0"
-      aria-valuenow="25"
-      aria-valuetext="25 volume level"
+      aria-valuenow="100"
+      aria-valuetext="100 volume level"
       aria-valuemax="100"
-      aria-labelledby="id-temp-label"
+      aria-labelledby={labelId}
     >
       <rect
         class="rail stroke-current w-0.5 fill-current"
@@ -136,7 +150,7 @@
     constructor(domNode: HTMLElement) {
       this.domNode = domNode;
       this.muteButton = this.domNode.querySelector(
-        "#btnVolumeMute"
+        "button[role='button']",
       ) as HTMLButtonElement;
 
       this.svgNode = domNode.querySelector("svg[role='none']") as SVGSVGElement;
@@ -145,10 +159,10 @@
       this.railNode = domNode.querySelector(".rail") as SVGRectElement;
       this.sliderNode = domNode.querySelector("[role=slider]") as SVGGElement;
       this.sliderFocusNode = this.sliderNode.querySelector(
-        ".focus-ring"
+        ".focus-ring",
       ) as SVGRectElement;
       this.sliderThumbNode = this.sliderNode.querySelector(
-        ".thumb"
+        ".thumb",
       ) as SVGRectElement;
 
       // Dimensions
@@ -171,15 +185,15 @@
       this.svgNode.addEventListener("click", this.onRailClick.bind(this));
       this.sliderNode.addEventListener(
         "keydown",
-        this.onSliderKeydown.bind(this)
+        this.onSliderKeydown.bind(this),
       );
       this.sliderNode.addEventListener(
         "pointerdown",
-        this.onSliderPointerDown.bind(this)
+        this.onSliderPointerDown.bind(this),
       );
       this.svgNode.addEventListener(
         "pointermove",
-        this.onPointerMove.bind(this)
+        this.onPointerMove.bind(this),
       );
       document.addEventListener("pointerup", this.onPointerUp.bind(this));
       this.sliderNode.addEventListener("click", this.onSliderFocus.bind(this));
@@ -187,11 +201,11 @@
       // hover events
       this.domNode.addEventListener(
         "mouseenter",
-        this.onButtonHover.bind(this)
+        this.onButtonHover.bind(this),
       );
       this.domNode.addEventListener(
         "mouseleave",
-        this.onButtonLeave.bind(this)
+        this.onButtonLeave.bind(this),
       );
       // mute button
       this.muteButton.addEventListener("click", this.onToggleMute.bind(this));
@@ -202,7 +216,7 @@
       this.svgPoint.x = event.clientX;
       this.svgPoint.y = event.clientY;
       return this.svgPoint.matrixTransform(
-        this.svgNode.getScreenCTM()!.inverse()
+        this.svgNode.getScreenCTM()!.inverse(),
       );
     }
 
@@ -235,6 +249,14 @@
       this.sliderNode.setAttribute("aria-valuenow", String(value));
       this.sliderNode.setAttribute("aria-valuetext", text);
 
+      const audioId = this.domNode.getAttribute("data-audio-id");
+      if (audioId) {
+        const audio = document.getElementById(audioId);
+        if (audio instanceof HTMLAudioElement) {
+          audio.volume = value / 100;
+        }
+      }
+
       const height = this.railHeight - this.thumbHeight + this.borderWidth2;
 
       let pos = this.railY + height - 1;
@@ -243,7 +265,7 @@
       this.sliderNode.setAttribute("y", String(pos));
       this.sliderFocusNode.setAttribute(
         "y",
-        String(pos - (this.focusHeight - this.thumbHeight) / 2)
+        String(pos - (this.focusHeight - this.thumbHeight) / 2),
       );
       this.sliderThumbNode.setAttribute("y", String(pos));
       // ---- MUTING LOGIC ----

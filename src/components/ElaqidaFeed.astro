@@ -12,7 +12,7 @@ const setsize = questions.length;
 >
   <h1 class="text-2xl sm:text-3xl" id="feed-titles">أسئلة العقيدة الإسلامية</h1>
   {
-    questions.map(({ id, type_que, question, answer, audio_url }, x) => {
+    questions.map(({ id, type_que, question, answer }, x) => {
       return (
         <article
           role="article"
@@ -59,7 +59,7 @@ const setsize = questions.length;
           <p class="mt-4 mb-6" id={`answer-name-${x + 1}`}>
             {answer}
           </p>
-          <a href={audio_url} class="flex gap-2 items-center w-fit">
+          <a href={`/elaqida/${id}`} class="flex gap-2 items-center w-fit">
             <span class="visually-hidden">استمع الان {type_que}</span>
             <span aria-hidden="true">أستمع الان</span>
             <svg

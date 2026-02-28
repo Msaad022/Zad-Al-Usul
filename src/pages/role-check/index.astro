@@ -20,9 +20,6 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
   <form
     method="POST"
     action={actions.auth.login}
-    aria-describedby={result?.error?.type === "AstroActionError"
-      ? "form-error"
-      : undefined}
     class="relative max-w-2xl mt-20"
   >
     <fieldset>
@@ -34,6 +31,7 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >أدخل عنوان بريدك الإلكتروني
         </label>
+        dog
         <input
           type="email"
           id="email"
@@ -77,14 +75,15 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
             </p>
           )
         }
-        {
-          result?.error?.type === "AstroActionError" && (
-            <p id="form-error" role="alert" class="whitespace-pre-line">
-              {/* {result.error.message} */}
-              not found result error
-            </p>
-          )
-        }
+        <p id="form-error" role="alert" class="whitespace-pre-line">
+          {
+            result?.error?.type === "AstroActionError" && (
+              <span>
+                {result.error.message}
+              </span>
+            )
+          }
+        </p>
       </div>
 
       <button

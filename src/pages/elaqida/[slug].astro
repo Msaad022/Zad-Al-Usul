@@ -1,56 +1,83 @@
 ---
-// If you meant for this route to be server-rendered, set export const prerender = false; in the page.
 export const prerender = false;
+
 import Layout from "../../layouts/Layout.astro";
-import {
-  AudioService,
-  AudioStorageFactory,
-} from "../../lib/cloudinary/model/getAudios";
 import { AudioPlayer } from "../../components";
-import PostRepository from "../../db/elaqidaRepository";
+import { getQuestionBySlug } from "../../utils/roleCheck";
 
 const { slug } = Astro.params;
 
-if (!slug || !/^[1-9]\d*$/.test(slug)) {
-  return new Response(null, {
-    status: 404,
-    statusText: "not found",
-  });
+let question: Awaited<ReturnType<typeof getQuestionBySlug>> = null;
+let errorMessage: string | null = null;
+
+try {
+  question = await getQuestionBySlug(slug ?? undefined);
+} catch (err) {
+  errorMessage = err instanceof Error ? err.message : "حدث خطأ في تحميل البيانات.";
 }
 
-const index = parseInt(slug, 10);
-const audioService = new AudioService(AudioStorageFactory.create("cloudinary"));
-const audioCloudUrl = await audioService.getAudio(index, 5000);
+if (errorMessage) {
+  return Astro.redirect("/elaqida?error=" + encodeURIComponent(errorMessage));
+}
 
-let audioPosts = null;
-if (audioCloudUrl.status != 200) {
-  return new Response(null, {
-    status: audioCloudUrl.status,
-    statusText: audioCloudUrl.message,
-  });
-} else if (audioCloudUrl.status === 200) {
-  audioPosts = await PostRepository.getById(index);
+// Playable media URL: must be Cloudinary secure URL or same-origin path (old seed data)
+const audioPlaybackUrl = question?.secure_url ?? "";
+
+
+const notFound = !question;
+const questionData = notFound ? null : question;
+const words = questionData && Array.isArray(questionData.words)
+  ? (questionData.words as Array<{ text: string; start: number; end: number }>)
+  : [];
+
+
+if (notFound) {
+  Astro.response.status = 404;
 }
 ---
 
-<Layout>
-  <Fragment slot="head-meta">
-    <title>زاد الأصول | {audioPosts?.question}</title>
-  </Fragment>
+{notFound ? (
+  <Layout>
+    <Fragment slot="head-meta">
+      <title>زاد الأصول | السؤال غير موجود</title>
+    </Fragment>
+    <section class="not-found-section" aria-labelledby="not-found-title">
+      <h1 id="not-found-title">السؤال غير موجود</h1>
+      <p>لم يتم العثور على السؤال المطلوب. تأكد من الرابط أو ارجع إلى <a href="/elaqida">قائمة الأسئلة</a>.</p>
+    </section>
+    <style>
+      .not-found-section {
+        max-width: 36rem;
+        margin: 2rem auto;
+        padding: 2rem;
+        text-align: center;
+      }
+      .not-found-section h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .not-found-section a {
+        color: var(--spotify-green, #1db954);
+        text-decoration: underline;
+      }
+    </style>
+  </Layout>
+) : questionData ? (
+  <Layout>
+    <Fragment slot="head-meta">
+      <title>زاد الأصول | {questionData.question}</title>
+    </Fragment>
 
-  <!-- <h1>🎵 الملف رقم {index}</h1>
-  <div style="margin-top:20px">
-    <a href={`/elaqida/${index + 1}`}>التالي ➡️</a>
-    {index > 1 && <a href={`/elaqida/${index - 1}`}>⬅️ السابق</a>}
-  </div> -->
-
-  {
-    audioCloudUrl.status === 200 && "secure_url" in audioCloudUrl && (
-      <AudioPlayer audioPosts={audioPosts} audioCloudUrl={audioCloudUrl} />
-      // <audio controls>
-      //   <source src={audioCloudUrl.secure_url} type="audio/ogg" />
-      //   Your browser does not support audio playback.
-      // </audio>
-    )
-  }
-</Layout>
+    <AudioPlayer
+      audioPosts={{
+        id: questionData.id,
+        type_que: questionData.type_que ?? "",
+        question: questionData.question ?? "",
+        answer: questionData.answer ?? "",
+        description: questionData.description ?? "",
+        words,
+      }}
+      audioCloudUrl={audioPlaybackUrl}
+    />
+  </Layout>
+) : null}

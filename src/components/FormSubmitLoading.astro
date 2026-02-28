@@ -1,0 +1,78 @@
+---
+/**
+ * Reusable form submit loading state.
+ * On form submit: sets submit button(s) text to "جاري الإرسال...", disables button(s).
+ * Restores when HTML5 validation fails (invalid event) so user can correct and resubmit.
+ * With full-page POST, page navigates so no restore needed.
+ */
+---
+
+<script is:inline>
+  (function () {
+    var LOADING_TEXT = "جاري الإرسال...";
+
+    function getSubmitButtons(form) {
+      return form.querySelectorAll(
+        'button[type="submit"], input[type="submit"]',
+      );
+    }
+
+    function setLoadingState(buttons) {
+      for (var i = 0; i < buttons.length; i++) {
+        var btn = buttons[i];
+        if (btn.disabled) continue;
+        var original = btn.getAttribute("data-original-text");
+        if (original === null || original === "") {
+          original =
+            btn.tagName === "INPUT"
+              ? btn.value
+              : (btn.textContent || "").trim();
+          btn.setAttribute("data-original-text", original);
+        }
+        if (btn.tagName === "INPUT") btn.value = LOADING_TEXT;
+        else btn.textContent = LOADING_TEXT;
+        btn.disabled = true;
+      }
+    }
+
+    function restoreButtons(buttons) {
+      for (var i = 0; i < buttons.length; i++) {
+        var btn = buttons[i];
+        var original = btn.getAttribute("data-original-text");
+        if (original !== null && original !== "") {
+          if (btn.tagName === "INPUT") btn.value = original;
+          else btn.textContent = original;
+          btn.disabled = false;
+        }
+      }
+    }
+
+    function init() {
+      var forms = document.querySelectorAll("form");
+      for (var f = 0; f < forms.length; f++) {
+        (function (form) {
+          form.addEventListener("submit", function () {
+            var buttons = getSubmitButtons(form);
+            if (buttons.length === 0) return;
+            setLoadingState(buttons);
+
+            function restore() {
+              restoreButtons(buttons);
+              form.removeEventListener("invalid", restore, true);
+            }
+            form.addEventListener("invalid", restore, true);
+            setTimeout(function () {
+              form.removeEventListener("invalid", restore, true);
+            }, 2000);
+          });
+        })(forms[f]);
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>

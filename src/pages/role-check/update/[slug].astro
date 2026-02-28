@@ -1,0 +1,240 @@
+---
+export const prerender = false;
+import Layout from "../../../layouts/Layout.astro";
+import { actions, isInputError } from "astro:actions";
+import { Breadcrumb, type ICrumb } from "../../../components";
+import { getQuestionById } from "../../../utils/roleCheck";
+
+const { slug } = Astro.params;
+if (!slug) {
+  return Astro.redirect("/role-check/upload", 302);
+}
+
+const id = Number(slug);
+if (Number.isNaN(id) || id < 1) {
+  return Astro.redirect("/role-check/upload", 302);
+}
+
+const question = await getQuestionById(id);
+if (!question) {
+  return Astro.redirect("/role-check/upload", 302);
+}
+
+const result = Astro.getActionResult(actions.update.question);
+if (result?.data?.success) {
+  return Astro.redirect("/role-check/upload?toast=update_success", 303);
+}
+
+const inputErrors = isInputError(result?.error) ? result.error.fields : {};
+const updateErrorMessage =
+  result?.error?.type === "AstroActionError"
+    ? result.error.message
+    : Object.keys(inputErrors).length
+      ? "يرجى تصحيح الأخطاء في النموذج."
+      : null;
+
+const itemsCrumb: ICrumb[] = [
+  { type: "both", current: false, name: "زاد الأصول", url: "/" },
+  {
+    type: "breadcrumb",
+    current: false,
+    name: "أسئلة العقيدة",
+    url: "/elaqida",
+  },
+  { type: "breadcrumb", current: true, name: "تعديل السؤال", url: "" },
+];
+---
+
+<Layout>
+  {
+    updateErrorMessage && (
+      <div
+        data-toast-initial
+        data-toast-message={updateErrorMessage}
+        data-toast-type="error"
+        class="sr-only"
+        aria-hidden="true"
+      />
+    )
+  }
+  <Fragment slot="head-meta">
+    <title>زاد الأصول | تعديل سؤال العقيدة</title>
+    <meta name="description" content="تعديل سؤال العقيدة" />
+  </Fragment>
+  <Breadcrumb itemsCrumb={itemsCrumb} />
+
+  <section class="mt-10">
+    <form
+      method="POST"
+      action={actions.update.question}
+      enctype="multipart/form-data"
+      class="relative max-w-2xl"
+    >
+      <input type="hidden" name="slug" value={slug} />
+      <fieldset>
+        <legend class="text-xl mb-6">تعديل سؤال في العقيدة</legend>
+
+        <div class="mb-6">
+          <label
+            for="typeque"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >ترتيب السؤال</label
+          >
+          <input
+            type="text"
+            id="typeque"
+            name="typeque"
+            value={question.type_que ?? ""}
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="السؤال الاول او السؤال الثاني وهكذا"
+            minlength="6"
+            required
+            aria-invalid={inputErrors.typeque ? "true" : "false"}
+            aria-errormessage="error-typeque"
+          />
+          {
+            inputErrors.typeque && (
+              <p
+                id="error-typeque"
+                class="whitespace-pre-line text-red-600 dark:text-red-400"
+              >
+                {inputErrors.typeque.join("\n")}
+              </p>
+            )
+          }
+        </div>
+
+        <div class="mb-6">
+          <label
+            for="question"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >نص السؤال</label
+          >
+          <textarea
+            id="question"
+            name="question"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="نص السؤال"
+            minlength="6"
+            required
+            aria-invalid={inputErrors.question ? "true" : "false"}
+            aria-errormessage="error-question"
+            >{question.question ?? ""}</textarea
+          >
+          {
+            inputErrors.question && (
+              <p
+                id="error-question"
+                class="whitespace-pre-line text-red-600 dark:text-red-400"
+              >
+                {inputErrors.question.join("\n")}
+              </p>
+            )
+          }
+        </div>
+
+        <div class="mb-6">
+          <label
+            for="answer"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >إجابة السؤال</label
+          >
+          <textarea
+            id="answer"
+            name="answer"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="إجابة السؤال"
+            rows="4"
+            minlength="6"
+            required
+            aria-invalid={inputErrors.answer ? "true" : "false"}
+            aria-errormessage="error-answer">{question.answer ?? ""}</textarea
+          >
+          {
+            inputErrors.answer && (
+              <p
+                id="error-answer"
+                class="whitespace-pre-line text-red-600 dark:text-red-400"
+              >
+                {inputErrors.answer.join("\n")}
+              </p>
+            )
+          }
+        </div>
+
+        <div class="mb-6">
+          <label
+            for="description"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >أشرح السؤال</label
+          >
+          <textarea
+            id="description"
+            name="description"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="أشرح السؤال"
+            rows="4"
+            minlength="300"
+            required
+            aria-invalid={inputErrors.description ? "true" : "false"}
+            aria-errormessage="error-description"
+            >{question.description ?? ""}</textarea
+          >
+          {
+            inputErrors.description && (
+              <p
+                id="error-description"
+                class="whitespace-pre-line text-red-600 dark:text-red-400"
+              >
+                {inputErrors.description.join("\n")}
+              </p>
+            )
+          }
+        </div>
+
+        <div class="mb-6">
+          <label
+            for="audio-file"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >أرفع تسجيل صوتي للسؤال (اختياري — اتركه فارغاً للإبقاء على التسجيل
+            الحالي)</label
+          >
+          <input
+            type="file"
+            accept="audio/*"
+            id="audio-file"
+            name="audiofile"
+            class="block w-fit py-2.5 px-3 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+            aria-invalid={inputErrors.audiofile ? "true" : "false"}
+            aria-errormessage="error-audiofile"
+          />
+          {
+            inputErrors.audiofile && (
+              <p
+                id="error-audiofile"
+                class="whitespace-pre-line text-red-600 dark:text-red-400"
+              >
+                {inputErrors.audiofile.join("\n")}
+              </p>
+            )
+          }
+          <p
+            id="form-error"
+            role="alert"
+            class="whitespace-pre-line text-red-600 dark:text-red-400 mt-2"
+          >
+            {result?.error?.type === "AstroActionError" && result.error.message}
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          aria-label="حفظ التعديلات"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          حفظ التعديلات
+        </button>
+      </fieldset>
+    </form>
+  </section>
+</Layout>

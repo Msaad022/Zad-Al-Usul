@@ -6,7 +6,6 @@ const Questions = defineTable({
     type_que: column.text(),
     question: column.text(),
     answer: column.text(),
-    audio_url: column.text(),
     secure_url: column.text(),
     words: column.json(),
     description: column.text(),

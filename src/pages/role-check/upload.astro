@@ -20,15 +20,34 @@ const itemsCrumb: ICrumb[] = [
 ];
 
 const result = Astro.getActionResult(actions.upload.question);
-if (result && !result.error) {
-  // return Astro.redirect("/role-check/upload", 303);
-  console.log("success upload");
+const searchResult = Astro.getActionResult(actions.search.question);
+if (result?.data?.success) {
+  return Astro.redirect("/role-check/upload?toast=upload_success", 303);
 }
 const inputErrors = isInputError(result?.error) ? result.error.fields : {};
-console.log(result);
+const uploadErrorMessage =
+  result?.error?.type === "AstroActionError"
+    ? result.error.message
+    : inputErrors && Object.keys(inputErrors).length
+      ? "يرجى تصحيح الأخطاء في النموذج."
+      : null;
+const searchInputErrors = isInputError(searchResult?.error)
+  ? searchResult.error.fields
+  : {};
 ---
 
 <Layout>
+  {
+    uploadErrorMessage && (
+      <div
+        data-toast-initial
+        data-toast-message={uploadErrorMessage}
+        data-toast-type="error"
+        class="sr-only"
+        aria-hidden="true"
+      />
+    )
+  }
   <Fragment slot="head-meta">
     <title>زاد الأصول | إضافة أسئلة العقيده</title>
     <meta name="description" content="إضافة أسئلة العقيده" />
@@ -44,13 +63,14 @@ console.log(result);
             "@type": "ListItem",
             "position": 1,
             "name": "زاد الأصول",
-            "item": "http://localhost:4321"
+            "item": `${import.meta.env.PUBLIC_SITE_URL}`
+
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "أسئلة العقيدة الإسلامية",
-            "item": "http://localhost:4321/elaqida"
+            "item": `${import.meta.env.PUBLIC_SITE_URL}/elaqida`
           }
         ]
       }
@@ -60,7 +80,7 @@ console.log(result);
 
   <section class="mt-10">
     <form
-      method="GET"
+      method="POST"
       action={actions.search.question}
       class="max-w-md mx-auto"
     >
@@ -93,9 +113,10 @@ console.log(result);
           <input
             type="search"
             id="default-search"
+            name="search"
             class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="ابحثْ عن سؤال إذا أردتَ التعديل. (مثال السؤال الاول)"
-            minlength="8"
+            minlength="1"
           />
           <button
             type="submit"
@@ -105,6 +126,43 @@ console.log(result);
         </div>
       </fieldset>
     </form>
+    {
+      searchResult?.data && (
+        <div class="mt-4 max-w-md mx-auto" role="region" aria-live="polite">
+          {searchResult.data.results?.length ? (
+            <ul class="border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
+              {searchResult.data.results.map(
+                (r: { slug: string; type_que: string; question: string }) => (
+                  <li>
+                    <a
+                      href={`/role-check/update/${r.slug}`}
+                      class="block p-3 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-white"
+                    >
+                      <span class="font-medium">{r.type_que}</span> —{" "}
+                      {r.question}
+                    </a>
+                  </li>
+                ),
+              )}
+            </ul>
+          ) : (
+            <p class="text-gray-700 dark:text-gray-300">
+              {searchResult.data.message ?? "السؤال غير موجود"}
+            </p>
+          )}
+        </div>
+      )
+    }
+    {
+      searchInputErrors?.search && (
+        <p
+          class="mt-2 text-sm text-red-600 dark:text-red-400"
+          id="search-error"
+        >
+          {searchInputErrors.search.join(" ")}
+        </p>
+      )
+    }
   </section>
 
   <form
@@ -128,15 +186,15 @@ console.log(result);
           name="typeque"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="السؤال الاول او السؤال الثاني وهكذا"
-          aria-describedby="error-typeque error-inputs"
-          minlength="8"
+          minlength="6"
+          required
+          aria-invalid={inputErrors.typeque ? "true" : "false"}
+          aria-errormessage="error-typeque"
         />
         {
           inputErrors.typeque && (
-            <p id="error-typeque" role="alert">
-              {inputErrors.typeque.map((err) => {
-                return <span class="block mt-1.5">{err}</span>;
-              })}
+            <p id="error-typeque" class="whitespace-pre-line">
+              {inputErrors.typeque.join("\n")}
             </p>
           )
         }
@@ -152,16 +210,17 @@ console.log(result);
           name="question"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="نص السؤال"
-          aria-describedby="error-question error-inputs"
-          minlength="8"
+          minlength="6"
           autocomplete="nope"
-          aria-autocomplete="none"></textarea>
+          required
+          aria-autocomplete="none"
+          aria-invalid={inputErrors.question ? "true" : "false"}
+          aria-errormessage="error-question"></textarea>
+
         {
           inputErrors.question && (
-            <p id="error-question" role="alert">
-              {inputErrors.question.map((err) => {
-                return <span class="block mt-1.5">{err}</span>;
-              })}
+            <p id="error-question" class="whitespace-pre-line">
+              {inputErrors.question.join("\n")}
             </p>
           )
         }
@@ -177,17 +236,18 @@ console.log(result);
           name="answer"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="إجابة السؤال"
-          aria-describedby="error-answer error-inputs"
           rows="4"
-          minlength="8"
+          minlength="6"
           autocomplete="nope"
-          aria-autocomplete="none"></textarea>
+          aria-autocomplete="none"
+          required
+          aria-invalid={inputErrors.answer ? "true" : "false"}
+          aria-errormessage="error-answer"></textarea>
+
         {
           inputErrors.answer && (
-            <p id="error-answer" role="alert">
-              {inputErrors.answer.map((err) => {
-                return <span class="block mt-1.5">{err}</span>;
-              })}
+            <p id="error-answer" class="whitespace-pre-line">
+              {inputErrors.answer.join("\n")}
             </p>
           )
         }
@@ -203,17 +263,18 @@ console.log(result);
           name="description"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="أشرح السؤال"
-          aria-describedby="error-description error-inputs"
           rows="4"
           minlength="300"
           autocomplete="nope"
-          aria-autocomplete="none"></textarea>
+          aria-autocomplete="none"
+          required
+          aria-invalid={inputErrors.description ? "true" : "false"}
+          aria-errormessage="error-description"></textarea>
+
         {
           inputErrors.description && (
-            <p id="error-description" role="alert">
-              {inputErrors.description.map((err) => {
-                return <span class="block mt-1.5">{err}</span>;
-              })}
+            <p id="error-description" class="whitespace-pre-line">
+              {inputErrors.description.join("\n")}
             </p>
           )
         }
@@ -231,24 +292,25 @@ console.log(result);
           name="audiofile"
           class="block w-fit py-2.5 px-3 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
           placeholder="أرفع تسجيل صوتي للسؤال"
-          aria-describedby="error-audiofile error-inputs"
+          required
+          aria-invalid={inputErrors.audiofile ? "true" : "false"}
+          aria-errormessage="error-audiofile"
         />
-        <!-- {
-          inputErrors.audiofile && (
-            <p id="error-audiofile" role="alert">
-              {inputErrors.audiofile.map((err) => {
-                return <span class="block mt-1.5">{err}</span>;
-              })}
-            </p>
-          )
-        } -->
         {
-          result?.error?.type == "AstroActionError" && (
-            <p id="error-inputs" role="alert">
-              <span class="block mt-1.5">{result?.error?.message}</span>
+          inputErrors.audiofile && (
+            <p id="error-audiofile" class="whitespace-pre-line">
+              {inputErrors.audiofile.join("\n")}
             </p>
           )
         }
+
+        <p id="form-error" role="alert" class="whitespace-pre-line">
+          {
+            result?.error?.type === "AstroActionError" && (
+              <span>{result.error.message}</span>
+            )
+          }
+        </p>
       </div>
 
       <button

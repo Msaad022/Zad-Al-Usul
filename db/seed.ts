@@ -7,8 +7,7 @@ export default async function () {
       type_que: "السؤال الاول",
       question: "من ربك",
       answer: "ربى الله وهو رب العالمين.",
-      audio_url: "/elaqida/1",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "السؤال",
@@ -69,8 +68,7 @@ export default async function () {
       type_que: "السؤال الثاني",
       question: "ما دينك",
       answer: "دينى الاسلام.",
-      audio_url: "/elaqida/2",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "السؤال",
@@ -116,8 +114,7 @@ export default async function () {
       type_que: "السؤال الثالث",
       question: "من نبيك",
       answer: "نبيى محمد بن عبد الله بن عبد المطلب صلى الله عليه وسلم",
-      audio_url: "/elaqida/3",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "السؤال",
@@ -213,8 +210,7 @@ export default async function () {
       type_que: "السؤال الرابع",
       question: "ما كتابك",
       answer: "كتابى القرآن الكريم.",
-      audio_url: "/elaqida/4",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "السؤال",
@@ -265,8 +261,7 @@ export default async function () {
       type_que: "السؤال الخامس",
       question: "ما هو القرآن",
       answer: "هو كلام الله تعالى.",
-      audio_url: "/elaqida/5",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "السؤال",
@@ -328,8 +323,7 @@ export default async function () {
       question: "لماذا نحفظ القرآن",
       answer:
         "حتى يرضى عنى ربى ، وأكون من أهل الجنه ، ويلبس والدى تاج الكرامه .",
-      audio_url: "/elaqida/6",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "السؤال",
@@ -430,8 +424,7 @@ export default async function () {
       type_que: "السؤال السابع",
       question: "من الذى خلقنا",
       answer: "الله هو الذى خلقنا ورزقنا ، وخلق السماوات والأرض ، وخلق كل شئ.",
-      audio_url: "/elaqida/7",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "السؤال",
@@ -527,8 +520,7 @@ export default async function () {
       type_que: "السؤال الثامن",
       question: "لماذا خلقنا الله",
       answer: "الله خلقنا لنعبده ولا نشرك به أحدا.",
-      audio_url: "/elaqida/8",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "السؤال",
@@ -604,8 +596,7 @@ export default async function () {
       type_que: "السؤال التاسع",
       question: "ما هى كلمة التوحيد",
       answer: "لا اله إلا الله.",
-      audio_url: "/elaqida/9",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "سؤال",
@@ -671,8 +662,7 @@ export default async function () {
       type_que: "السؤال العاشر",
       question: "ما معناها",
       answer: "لا معبود بحق إلا الله .",
-      audio_url: "/elaqida/10",
-      secure_url: "",
+      secure_url: "/public/El Aqida/3aqeeda1.ogg",
       words: [
         {
           text: "سؤال",

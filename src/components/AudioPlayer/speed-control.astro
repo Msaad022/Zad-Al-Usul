@@ -1,11 +1,25 @@
-<div class="combo-speed js-select-speed block mb-1.5 w-28 relative">
-  <div id="combo1-speed-label" class="combo-speed-label" hidden>Speed</div>
+---
+interface Props {
+  playerId?: string;
+  audioId?: string;
+}
+const { playerId = "default", audioId } = Astro.props;
+const comboId = `combo-speed-${playerId}`;
+const listboxId = `listbox-speed-${playerId}`;
+const labelId = `combo-speed-label-${playerId}`;
+---
+
+<div
+  class="combo-speed js-select-speed block mb-1.5 w-28 relative"
+  data-audio-id={audioId ?? undefined}
+>
+  <div id={labelId} class="combo-speed-label" hidden>Speed</div>
   <div
-    aria-controls="listbox1"
+    aria-controls={listboxId}
     aria-expanded="false"
     aria-haspopup="listbox"
-    aria-labelledby="combo1-speed-label"
-    id="combo1-speed"
+    aria-labelledby={labelId}
+    id={comboId}
     class="combo-speed-input bg-[#282c2e] block text-base pt-3 px-4 pb-3.5 text-left w-full"
     role="combobox"
     tabindex="0"
@@ -14,13 +28,13 @@
   <div
     class="combo-speed-menu bg-[#282c2e] rounded-[0_0_4px_4px] hidden max-h-72 overflow-y-auto w-full absolute left-0 top-full z-[100] [.open_&]:block"
     role="listbox"
-    id="listbox1"
-    aria-labelledby="combo1-speed-label"
+    id={listboxId}
+    aria-labelledby={labelId}
     tabindex="-1"
   >
     <div
       role="option"
-      id="combo1-speed-0"
+      id={`${comboId}-0`}
       class="combo-speed-option"
       aria-selected="false"
     >
@@ -28,7 +42,7 @@
     </div>
     <div
       role="option"
-      id="combo1-speed-1"
+      id={`${comboId}-1`}
       class="combo-speed-option"
       aria-selected="false"
     >
@@ -36,7 +50,7 @@
     </div>
     <div
       role="option"
-      id="combo1-speed-2"
+      id={`${comboId}-2`}
       class="combo-speed-option"
       aria-selected="false"
     >
@@ -44,7 +58,7 @@
     </div>
     <div
       role="option"
-      id="combo1-speed-3"
+      id={`${comboId}-3`}
       class="combo-speed-option option-current"
       aria-selected="true"
     >
@@ -52,7 +66,7 @@
     </div>
     <div
       role="option"
-      id="combo1-speed-4"
+      id={`${comboId}-4`}
       class="combo-speed-option"
       aria-selected="false"
     >
@@ -124,7 +138,7 @@
   function filterOptions(
     options: string[],
     filter: string,
-    exclude: string[] = []
+    exclude: string[] = [],
   ): string[] {
     return options.filter((option) => {
       const matches = option.toLowerCase().startsWith(filter.toLowerCase());
@@ -135,7 +149,7 @@
   /** Helper: map keyboard key to action */
   function getActionFromKey(
     event: KeyboardEvent,
-    menuOpen: boolean
+    menuOpen: boolean,
   ): SelectActions | undefined {
     const { key, altKey, ctrlKey, metaKey } = event;
     const openKeys = ["ArrowDown", "ArrowUp", "Enter", " "];
@@ -180,7 +194,7 @@
   function getIndexByLetter(
     options: string[],
     filter: string,
-    startIndex = 0
+    startIndex = 0,
   ): number {
     const ordered = [
       ...options.slice(startIndex),
@@ -201,7 +215,7 @@
   function getUpdatedIndex(
     current: number,
     max: number,
-    action: SelectActions
+    action: SelectActions,
   ): number {
     const pageSize = 10;
     switch (action) {
@@ -229,7 +243,7 @@
   /** Helper: scroll to ensure visibility */
   function maintainScrollVisibility(
     active: HTMLElement,
-    parent: HTMLElement
+    parent: HTMLElement,
   ): void {
     const { offsetHeight, offsetTop } = active;
     const { offsetHeight: pHeight, scrollTop } = parent;
@@ -259,10 +273,10 @@
       this.listboxEl = el.querySelector('[role="listbox"]') as HTMLElement;
 
       this.options = Array.from(
-        this.listboxEl.querySelectorAll<HTMLElement>('[role="option"]')
+        this.listboxEl.querySelectorAll<HTMLElement>('[role="option"]'),
       );
       this.optionTexts = this.options.map(
-        (opt) => opt.textContent?.trim() ?? ""
+        (opt) => opt.textContent?.trim() ?? "",
       );
       this.idBase = this.comboEl.id || "combo-speed";
       this.init();
@@ -270,7 +284,7 @@
 
     init(): void {
       const selectedIndex = this.options.findIndex(
-        (opt) => opt.getAttribute("aria-selected") === "true"
+        (opt) => opt.getAttribute("aria-selected") === "true",
       );
       this.activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
       this.comboEl.innerHTML = this.optionTexts[this.activeIndex];
@@ -293,7 +307,7 @@
 
       this.searchTimeout = window.setTimeout(
         () => (this.searchString = ""),
-        500
+        500,
       );
       this.searchString += char;
       return this.searchString;
@@ -328,7 +342,7 @@
         case SelectActions.PageDown:
           event.preventDefault();
           return this.onOptionChange(
-            getUpdatedIndex(this.activeIndex, max, action)
+            getUpdatedIndex(this.activeIndex, max, action),
           );
 
         case SelectActions.CloseSelect:
@@ -354,7 +368,7 @@
       const index = getIndexByLetter(
         this.optionTexts,
         search,
-        this.activeIndex + 1
+        this.activeIndex + 1,
       );
       if (index >= 0) this.onOptionChange(index);
     }
@@ -381,6 +395,14 @@
       this.options.forEach((opt, i) => {
         opt.setAttribute("aria-selected", String(i === index));
       });
+      const audioId = this.el.getAttribute("data-audio-id");
+      if (audioId) {
+        const audio = document.getElementById(audioId);
+        if (audio instanceof HTMLAudioElement) {
+          const value = parseFloat(selected.replace("x", "").trim()) || 1;
+          audio.playbackRate = value;
+        }
+      }
     }
 
     private updateMenuState(open: boolean, callFocus = true): void {

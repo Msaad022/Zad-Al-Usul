@@ -1,13 +1,11 @@
 import { auth } from "./auth";
-import { upload } from "./upload";
+import { upload } from "./role-check/upload";
 import { search } from "./search";
-import { update } from "./update";
-import { newsletter } from "./newsletter";
+import { update } from "./role-check/update";
 
 export const server = {
   auth,
   upload,
   search,
   update,
-  newsletter,
 };

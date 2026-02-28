@@ -1,11 +1,21 @@
+---
+interface Props {
+  playerId?: string;
+  embedInPlayer?: boolean;
+}
+const { playerId = "default", embedInPlayer = false } = Astro.props;
+const transcriptBtnId = `transcript-btn-${playerId}`;
+const gridId = `ex1-grid-${playerId}`;
+---
 <button
-  id="transcript-btn"
+  id={transcriptBtnId}
   class="toggle-transcript cursor-pointer"
   aria-expanded="false"
   aria-haspopup="grid"
-  aria-controls="ex1-grid"
+  aria-controls={gridId}
   aria-label="Turn on transcripts"
   title="Turn on transcripts"
+  data-embed-in-player={embedInPlayer ? "true" : undefined}
 >
   <svg
     aria-hidden="true"
@@ -29,10 +39,10 @@
 </button>
 
 <div
-  id="ex1-grid"
+  id={gridId}
   role="grid"
   data-per-page="5"
-  class="list-links hidden [.is-active+&]:block mt-5"
+  class:list={["list-links", "mt-5", "hidden", "[.is-active+&]:block", ...(embedInPlayer ? ["embed-in-player-hide"] : [])]}
   data-wrap-cols="true"
   data-wrap-rows="true"
   aria-label="Video transcript"
@@ -115,9 +125,13 @@
     outline-width: 3px;
   }
   @media screen and (min-width: 1024px) {
-    #ex1-grid:focus-within + #svg-keys {
+    [id^="ex1-grid-"]:focus-within + #svg-keys {
       display: block;
     }
+  }
+
+  .embed-in-player-hide {
+    display: none !important;
   }
 </style>
 
@@ -218,21 +232,19 @@
 
   // Initialization
   window.addEventListener("DOMContentLoaded", () => {
-    const transcriptBtn = document.getElementById(
-      "transcript-btn"
-    ) as HTMLElement | null;
+    const transcriptBtns = document.querySelectorAll<HTMLElement>(
+      ".toggle-transcript[aria-controls]"
+    );
 
-    if (!transcriptBtn) {
-      console.warn("Transcript button (#transcript-btn) not found.");
-      return;
-    }
+    transcriptBtns.forEach((transcriptBtn) => {
+      transcriptBtn.addEventListener("click", toggleTranscript);
 
-    transcriptBtn.addEventListener("click", toggleTranscript);
+      const gridId = transcriptBtn.getAttribute("aria-controls");
+      const grid = gridId ? document.getElementById(gridId) : null;
 
-    const grid = document.getElementById("ex1-grid");
-
-    if (grid instanceof HTMLElement) {
-      new SimpleGrid(grid);
-    }
+      if (grid instanceof HTMLElement && !grid.classList.contains("embed-in-player-hide")) {
+        new SimpleGrid(grid);
+      }
+    });
   });
 </script>
